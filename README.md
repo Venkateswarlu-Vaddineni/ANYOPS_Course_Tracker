@@ -1,8 +1,9 @@
-# Course Tracker Pro · Ultra Modern Local Learning Hub 🚀
+# ANYOPS Course Tracker · Ultra Modern Local Learning Hub 🚀
 
 An ultra-modern, privacy-first, local course tracker and learning studio designed for power learners. Built for local offline video courses, tutorials, and certifications with **zero build step**, instant launch, and rich analytics.
 
 ![UI Design](https://img.shields.io/badge/UI-Ultra%20Modern%20Glassmorphism-00f2fe?style=for-the-badge)
+![License](https://img.shields.io/badge/License-MIT-3b82f6?style=for-the-badge)
 ![Platform](https://img.shields.io/badge/Platform-100%25%20Local%20%7C%20Zero%20Cloud-10b981?style=for-the-badge)
 ![Storage](https://img.shields.io/badge/Storage-IndexedDB%20%2B%20LocalStorage-6366f1?style=for-the-badge)
 
@@ -10,11 +11,11 @@ An ultra-modern, privacy-first, local course tracker and learning studio designe
 
 ## ✨ Features & Architecture
 
-### 1. 🎨 Ultra-Modern Glassmorphic UI
-- **Cyber-Slate Aesthetics**: Deep `#07090e` dark theme with ambient luminous glows, frosted glass cards (`backdrop-filter: blur(20px)`), and subtle neon gradients.
+### 1. 🎨 Ultra-Modern Multi-Theme Design System
+- **Aurora Pearl (Default)**: Luminous, fresh, frosted pearl glass (`#f5f7fc`) with ambient iridescent mesh glows and deep slate typography (`#0f172a`).
+- **5-Theme Engine**: 1-click header switcher between **🌟 Aurora Pearl**, **🌅 Solaris Sunset** (warm amber & coral), **🌿 Alpine Mint** (fresh botanical teal), **🔮 Cosmic Violet** (electric velvet), and **⚡ Cyber Neon** (laser cyan tech).
 - **Typography**: Paired Google Fonts: **Plus Jakarta Sans** for modern headings and UI text, **JetBrains Mono** for metrics, timestamps, and percentages.
 - **Collapsible Sidebar Navigation**: Instant tab switching between **Curriculum**, **Analytics**, **Second Brain Notes**, **Focus Studio (Pomodoro)**, **Study Targets**, and **Course Library**.
-- **Responsive & Crisp**: 100% scalable vector SVG icons throughout, with support for mobile and desktop screens.
 
 ### 2. ⚡ Fast Command Palette (`Ctrl + K` / `⌘ + K`)
 - Press `Ctrl+K` from anywhere in the app to summon the instant spotlight palette.
@@ -33,10 +34,10 @@ An ultra-modern, privacy-first, local course tracker and learning studio designe
 - **1-Click Timestamp Seek**: Click any timestamp badge (`▶ 12:45`) to immediately open the lesson at that exact second.
 - **Export to Markdown (`.md`)**: Download your notes in clean GitHub-flavored markdown to bring directly into **Obsidian**, **Notion**, or **Logseq**.
 
-### 5. 🎬 Cinema Video Player 2.0
-- Dark cinema overlay with responsive aspect ratio.
-- **In-Player Playlist Drawer**: Switch between sections and lessons without leaving the player.
-- **In-Player Notes Drawer**: Add notes stamped to the exact current playback second.
+### 5. 🎬 Cinema Video Player 2.0 (Full Theater Mode)
+- **Togglable Notes & Lessons Sidebar**: Seamlessly toggle the right sidebar on/off using the topbar `[◫ Sidebar]` button, by clicking `📝 Notes` / `📑 Lessons`, via the in-drawer `✕` button, the floating restore pill, or with shortcut **`]`** / **`\`**.
+- **Theater Mode**: When the sidebar is collapsed, the video automatically expands to full width without requiring native full-screen.
+- **In-Player Notes & Playlist**: Take notes stamped to the exact second, and jump between course sections with live progress indicators.
 - **Smart Auto-Advance**: 5-second countdown banner on lesson completion with `[Play Now]` and `[Cancel]` controls.
 - **Speed Controls**: `0.5x` to `2.5x` with fine steps and memory.
 - **Native PiP & Fullscreen**: Multi-task with picture-in-picture mode.
@@ -57,20 +58,26 @@ An ultra-modern, privacy-first, local course tracker and learning studio designe
 
 ## 🚀 Getting Started
 
-### Option 1: Direct Double Click (Fastest)
-Simply double-click `The_Course_Tracker.html` or `index.html` to open it in **Google Chrome**, **Microsoft Edge**, **Brave**, or **Opera**.
+Anyone can download, clone, or fork this repository and start tracking courses immediately.
 
-### Option 2: Local Static Server (Recommended)
-You can serve the directory using any static web server:
+### Option 1: Direct Double Click (Zero Install / Zero Build)
+1. Clone or download this repository:
+   ```bash
+   git clone https://github.com/your-username/Course_Tracker.git
+   ```
+2. Double-click `index.html` (or `The_Course_Tracker.html`) to open it directly in **Google Chrome**, **Microsoft Edge**, **Brave**, or **Opera**.
+3. Click **"Connect Course Folder"** to select any local folder containing course videos (`.mp4`, `.mkv`, `.webm`), and start learning!
 
+### Option 2: Local Static Web Server (Optional)
+If you prefer running through a local development server:
 ```bash
-# Using Node.js npx serve
-npx.cmd serve .
+# Using Node.js
+npx serve .
 
 # Or using Python
 python -m http.server 8080
 ```
-Then navigate to `http://localhost:8080/The_Course_Tracker.html`.
+Then navigate to `http://localhost:8080`.
 
 ---
 
@@ -85,6 +92,7 @@ Then navigate to `http://localhost:8080/The_Course_Tracker.html`.
 | `↑` / `↓` | Volume up / down |
 | `M` | Mute / Unmute audio |
 | `N` | Play next lesson |
+| `]` or `\` | Toggle Notes & Lessons sidebar on/off |
 | `P` | Picture-in-Picture mode |
 | `F` | Toggle Fullscreen |
 | `<` / `>` | Decrease / Increase playback speed |
@@ -94,9 +102,18 @@ Then navigate to `http://localhost:8080/The_Course_Tracker.html`.
 
 ---
 
-## 📂 Data Storage & Privacy
+## 📂 Privacy & Local Data Protection
 
-All your progress, course names, and timestamps remain **100% on your machine**:
-- **`localStorage`**: Keeps real-time app settings, completed statuses, and goals.
-- **`IndexedDB`**: Stores persistent File System Directory Handles and automated rolling snapshots.
-- **`Course_Tracker_Backup.json`**: An exportable JSON file that can be committed to your private GitHub repo for cloud sync across machines.
+Your study data, watch history, notes, and local files remain **100% private on your machine**:
+- **Zero Cloud Transmission**: The app communicates with no external tracking servers.
+- **`localStorage`**: Stores active course metadata, completion checks, and streak metrics.
+- **`IndexedDB`**: Caches authorized directory handles and automated rolling snapshots.
+- **`.gitignore` Protection**: Backup files (`Course_Tracker_Backup.json`, `*backup*.json`), exported markdown notes, and local media files are strictly ignored so personal data is never accidentally committed or pushed to public Git remotes.
+
+---
+
+## 📄 License & Open Source Terms
+
+This project is licensed under the **[MIT License](LICENSE)**.
+
+You are free to download, use, copy, modify, merge, publish, distribute, and sublicense this software for personal and commercial learning workflows. See [LICENSE](LICENSE) for full details.

@@ -1,0 +1,51 @@
+# ANYOPS Course Tracker - .gitignore
+
+# Personal study data, progress, and course database backups
+Course_Tracker_Backup.json
+*backup*.json
+*.backup.json
+course-backup*.json
+*.backup
+*.bak
+
+# Markdown notes exports
+notes-export*.md
+
+# Media & local course video files (keep repo lightweight)
+*.mp4
+*.mkv
+*.avi
+*.mov
+*.webm
+*.mp3
+*.wav
+*.flac
+*.m4a
+
+# OS & system files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+[Dd]esktop.ini
+
+# IDE & editor directories
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+*.swp
+*.swo
+
+# Node / Scratch / Temp
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+scratch/
+tmp/
+temp/
+.cache/

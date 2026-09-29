@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Course Tracker Pro · Ultra Learning Hub</title>
+<title>ANYOPS Course Tracker · Ultra Learning Hub</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -924,6 +924,14 @@ button.lg {
   padding: 12px 22px;
   font-size: 14.5px;
   border-radius: var(--radius-md);
+}
+
+button.active {
+  background: var(--accent-cyan-dim);
+  border-color: var(--accent-cyan);
+  color: var(--accent-cyan);
+  font-weight: 700;
+  box-shadow: 0 0 12px var(--accent-cyan-glow);
 }
 
 /* ==========================================================================
@@ -1944,15 +1952,18 @@ video {
   display: flex;
   flex-direction: column;
   transition: width var(--transition-medium);
+  flex-shrink: 0;
 }
 
 .player-drawer.hidden {
-  display: none;
+  display: none !important;
 }
 
 .drawer-tabs {
   display: flex;
+  align-items: center;
   border-bottom: 1px solid var(--border-subtle);
+  background: var(--bg-surface-elevated);
 }
 
 .drawer-tab-btn {
@@ -1974,6 +1985,55 @@ video {
   color: var(--accent-cyan);
   border-bottom-color: var(--accent-cyan);
   background: var(--accent-cyan-dim);
+}
+
+.drawer-close-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  padding: 11px 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition-fast);
+  border-left: 1px solid var(--border-subtle);
+  font-size: 13px;
+}
+
+.drawer-close-btn:hover {
+  color: var(--accent-rose);
+  background: var(--accent-rose-dim);
+}
+
+.floating-sidebar-toggle {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 15;
+  display: none;
+  align-items: center;
+  gap: 7px;
+  background: var(--bg-glass-elevated);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-full);
+  padding: 6px 14px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-main);
+  box-shadow: var(--shadow-md);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.floating-sidebar-toggle:hover {
+  background: var(--bg-surface-hover);
+  border-color: var(--accent-cyan);
+  color: var(--accent-cyan);
+  transform: translateX(-2px);
+  box-shadow: var(--shadow-lg), var(--shadow-glow-cyan);
 }
 
 .drawer-content-pane {
@@ -2338,8 +2398,8 @@ video {
         </svg>
       </div>
       <div class="brand-text">
-        <h1>Course Tracker</h1>
-        <span class="badge">Ultra Studio</span>
+        <h1>ANYOPS</h1>
+        <span class="badge">Course Tracker</span>
       </div>
     </div>
 
@@ -2806,8 +2866,12 @@ video {
       <small id="playerSection">Section</small>
     </div>
     <div class="player-controls-right">
-      <button class="sm" id="btnPlayerDrawerNotes" title="Toggle Timestamped Notes">📝 Notes</button>
-      <button class="sm" id="btnPlayerDrawerPlaylist" title="Toggle Course Playlist">📑 Lessons</button>
+      <button class="sm" id="btnToggleDrawer" title="Toggle Notes & Playlist Sidebar [Key: ]]">
+        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px;margin-right:4px"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="15" y1="3" x2="15" y2="21"></line></svg>
+        <span>Sidebar</span>
+      </button>
+      <button class="sm" id="btnPlayerDrawerNotes" title="Toggle Notes Sidebar [Key: N]">📝 Notes</button>
+      <button class="sm" id="btnPlayerDrawerPlaylist" title="Toggle Course Playlist [Key: L]">📑 Lessons</button>
       <button class="sm" id="btnPlayerMarkDone">☐ Mark Done</button>
       <button class="sm" id="btnPlayerSpeed">1x</button>
       <button class="sm" id="btnPlayerPip" title="Picture in Picture">🗗 PiP</button>
@@ -2819,6 +2883,12 @@ video {
   <div class="player-body">
     <div class="video-stage">
       <video id="videoElement" controls playsinline></video>
+
+      <!-- Floating button to reopen sidebar when collapsed -->
+      <button class="floating-sidebar-toggle" id="btnFloatingSidebarToggle" title="Open Sidebar (Notes & Playlist) [Key: ]]">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="15" y1="3" x2="15" y2="21"></line></svg>
+        <span>Show Sidebar</span>
+      </button>
 
       <!-- Auto-advance countdown overlay -->
       <div class="autoadvance-overlay" id="autoAdvanceOverlay">
@@ -2838,6 +2908,9 @@ video {
       <div class="drawer-tabs">
         <button class="drawer-tab-btn active" id="tabDrawerNotes">📌 Notes</button>
         <button class="drawer-tab-btn" id="tabDrawerPlaylist">📑 Playlist</button>
+        <button class="drawer-close-btn" id="btnCloseDrawer" title="Hide Sidebar (Expand Video) [Key: ]]">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
       </div>
 
       <!-- Notes Pane -->
@@ -2917,6 +2990,7 @@ video {
       <div class="shortcut-key">N</div><div>Play next lesson</div>
       <div class="shortcut-key">P</div><div>Picture-in-Picture mode</div>
       <div class="shortcut-key">F</div><div>Fullscreen toggle</div>
+      <div class="shortcut-key">] or \</div><div>Toggle notes & playlist sidebar</div>
       <div class="shortcut-key">&lt; / &gt;</div><div>Decrease / Increase playback speed</div>
       <div class="shortcut-key">C</div><div>Toggle lesson completed</div>
       <div class="shortcut-key">Esc</div><div>Close video player / dialogs</div>
@@ -3550,6 +3624,15 @@ async function play(item) {
     renderPlayerNotes();
     renderPlayerPlaylist();
 
+    // Restore sidebar drawer preference
+    const savedDrawerVisible = localStorage.getItem("player-drawer-visible");
+    if (savedDrawerVisible === "false") {
+      $("playerDrawer").classList.add("hidden");
+    } else {
+      $("playerDrawer").classList.remove("hidden");
+    }
+    updateDrawerUI();
+
     $("playerModal").classList.add("open");
     try { await v.play(); } catch(e){}
 
@@ -3698,21 +3781,87 @@ $("btnPlayerMarkDone").onclick = () => {
 };
 
 /* Drawer Toggles inside Player */
-$("btnPlayerDrawerNotes").onclick = () => {
-  $("playerDrawer").classList.remove("hidden");
-  $("tabDrawerNotes").click();
-};
+function updateDrawerUI() {
+  const drawer = $("playerDrawer");
+  if (!drawer) return;
+  const isHidden = drawer.classList.contains("hidden");
 
-$("btnPlayerDrawerPlaylist").onclick = () => {
-  $("playerDrawer").classList.remove("hidden");
-  $("tabDrawerPlaylist").click();
-};
+  // Update topbar Toggle button
+  const btnToggle = $("btnToggleDrawer");
+  if (btnToggle) {
+    btnToggle.classList.toggle("active", !isHidden);
+    btnToggle.title = isHidden ? "Open Sidebar (Notes & Playlist) [Key: ]]" : "Collapse Sidebar (Full Width Video) [Key: ]]";
+  }
+
+  // Update topbar Notes button
+  const isNotesActive = !isHidden && $("paneDrawerNotes").classList.contains("active");
+  $("btnPlayerDrawerNotes").classList.toggle("active", isNotesActive);
+
+  // Update topbar Playlist button
+  const isPlaylistActive = !isHidden && $("paneDrawerPlaylist").classList.contains("active");
+  $("btnPlayerDrawerPlaylist").classList.toggle("active", isPlaylistActive);
+
+  // Update floating button on video stage
+  const floatBtn = $("btnFloatingSidebarToggle");
+  if (floatBtn) {
+    floatBtn.style.display = isHidden ? "flex" : "none";
+  }
+
+  // Persist preference
+  localStorage.setItem("player-drawer-visible", isHidden ? "false" : "true");
+}
+
+function setPlayerDrawerState(open, tab = null) {
+  const drawer = $("playerDrawer");
+  if (!drawer) return;
+  if (open) {
+    drawer.classList.remove("hidden");
+    if (tab === "playlist") {
+      $("tabDrawerPlaylist").click();
+    } else if (tab === "notes") {
+      $("tabDrawerNotes").click();
+    }
+  } else {
+    drawer.classList.add("hidden");
+  }
+  updateDrawerUI();
+}
+
+function togglePlayerDrawer(targetTab = null) {
+  const drawer = $("playerDrawer");
+  if (!drawer) return;
+  const isHidden = drawer.classList.contains("hidden");
+
+  if (targetTab === "notes") {
+    if (!isHidden && $("paneDrawerNotes").classList.contains("active")) {
+      setPlayerDrawerState(false);
+    } else {
+      setPlayerDrawerState(true, "notes");
+    }
+  } else if (targetTab === "playlist") {
+    if (!isHidden && $("paneDrawerPlaylist").classList.contains("active")) {
+      setPlayerDrawerState(false);
+    } else {
+      setPlayerDrawerState(true, "playlist");
+    }
+  } else {
+    setPlayerDrawerState(isHidden);
+  }
+}
+
+if ($("btnToggleDrawer")) $("btnToggleDrawer").onclick = () => togglePlayerDrawer();
+if ($("btnCloseDrawer")) $("btnCloseDrawer").onclick = () => setPlayerDrawerState(false);
+if ($("btnFloatingSidebarToggle")) $("btnFloatingSidebarToggle").onclick = () => setPlayerDrawerState(true);
+
+$("btnPlayerDrawerNotes").onclick = () => togglePlayerDrawer("notes");
+$("btnPlayerDrawerPlaylist").onclick = () => togglePlayerDrawer("playlist");
 
 $("tabDrawerNotes").onclick = () => {
   $("tabDrawerNotes").classList.add("active");
   $("tabDrawerPlaylist").classList.remove("active");
   $("paneDrawerNotes").classList.add("active");
   $("paneDrawerPlaylist").classList.remove("active");
+  updateDrawerUI();
 };
 
 $("tabDrawerPlaylist").onclick = () => {
@@ -3721,6 +3870,7 @@ $("tabDrawerPlaylist").onclick = () => {
   $("paneDrawerPlaylist").classList.add("active");
   $("paneDrawerNotes").classList.remove("active");
   renderPlayerPlaylist();
+  updateDrawerUI();
 };
 
 $("btnStampTime").onclick = () => {
@@ -4975,6 +5125,9 @@ document.addEventListener("keydown", e => {
     $("btnPlayerFs").click();
   } else if (e.key === "p" || e.key === "P") {
     $("btnPlayerPip").click();
+  } else if (e.key === "]" || e.key === "\\") {
+    e.preventDefault();
+    togglePlayerDrawer();
   } else if (e.key === "." || e.key === ">") {
     setSpeed(speedIdx + 1);
   } else if (e.key === "," || e.key === "<") {
