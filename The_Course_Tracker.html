@@ -2,510 +2,3076 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Local Course Tracker</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Course Tracker Pro · Local Learning Hub</title>
 <style>
-:root{--bg:#11151c;--surface:#1a1f29;--surface2:#212734;--border:#2a303c;--text:#edeff2;--muted:#8890a0;--faint:#565d6b;--teal:#4fd1c5;--amber:#f0a94e;--sans:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;--mono:ui-monospace,"SF Mono","Cascadia Code",Consolas,monospace}
-*{box-sizing:border-box}html,body{margin:0;background:var(--bg);color:var(--text);font-family:var(--sans)}body{padding:28px 18px 70px}.wrap{max-width:920px;margin:auto}
-header{margin-bottom:18px}.eyebrow{font:11px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--faint);margin-bottom:6px}h1{font-size:25px;margin:0}.subtitle{font-size:13px;color:var(--muted);margin-top:5px}.path{font:11px var(--mono);color:var(--faint);margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.card{background:var(--surface);border:1px solid var(--border);border-radius:11px;padding:18px;margin-top:12px}.dash-head{display:flex;justify-content:space-between;align-items:center;gap:12px}.dash-title{font-size:14px;font-weight:650}.dash-subtitle{font-size:11px;color:var(--muted);margin-top:3px}
-button{border:1px solid var(--border);background:var(--surface);color:var(--text);border-radius:7px;padding:8px 11px;font:13px var(--sans);cursor:pointer}button:hover{background:var(--surface2)}button.primary{background:var(--teal);border-color:var(--teal);color:#081310;font-weight:650}button:disabled{opacity:.45;cursor:not-allowed}.danger:hover{border-color:#b5544a;color:#ef9a90}
-.dashboard-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(84px,1fr));gap:8px;margin-top:13px}.metric{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:10px}.metric b{display:block;font:600 19px var(--mono);color:var(--teal)}.metric span{font-size:10px;color:var(--muted)}
-.range{display:flex;gap:4px}.range button{padding:5px 8px;font:11px var(--mono)}.range .active{border-color:var(--teal);color:var(--teal)}
-.chart{margin-top:13px;border-top:1px solid var(--border);padding-top:10px}.chart canvas{width:100%;height:110px;display:block}
-.activity{margin-top:8px}.activity-row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font:11px var(--mono)}.activity-row:last-child{border:0}.activity-row span:first-child{color:var(--muted)}
-.course-list{display:flex;flex-direction:column;gap:7px;margin-top:12px}.course-row{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:10px}.course-row.current{border-color:#4fd1c560}.course-name{font-size:13px;font-weight:600}.course-meta{font:10px var(--mono);color:var(--muted);margin-top:4px}.course-actions{display:flex;gap:6px}.course-actions button{font-size:11px;padding:6px 8px}
-.top{display:flex;justify-content:space-between;align-items:flex-end;gap:15px}.pct{font:600 44px var(--mono);color:var(--teal)}.today-tag{font:600 11px var(--mono);color:var(--teal);margin-top:2px;min-height:14px}.stats{text-align:right;font:11px var(--mono);color:var(--muted);line-height:1.7}.bar{height:9px;background:#f0a94e25;border-radius:5px;margin-top:14px;overflow:hidden}.fill{height:100%;background:var(--teal);width:0;transition:width .25s}
-.controls{display:flex;gap:7px;flex-wrap:wrap;margin-top:14px}.note{font-size:11px;color:var(--muted);line-height:1.5;margin-top:10px}
-.continue{display:flex;justify-content:space-between;align-items:center;gap:12px;background:#4fd1c510;border:1px solid #4fd1c530;border-radius:9px;padding:12px;margin-top:13px}.continue small{display:block;color:var(--muted);font:10px var(--mono);margin-bottom:4px}.continue strong{font-size:13px}.continue-actions{display:flex;gap:6px;flex-wrap:wrap}
-.filter{display:flex;gap:7px;margin-top:13px}.filter input,.filter select{flex:1;min-width:0;background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:7px;padding:8px 9px;font:12px var(--sans)}
-.day-result{margin-top:12px;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:12px}.day-result .dr-pct{font:600 26px var(--mono);color:var(--teal)}.day-result .dr-meta{font:11px var(--mono);color:var(--muted);margin-top:2px}.day-result .dr-list{margin-top:8px;font:11px var(--mono);color:var(--muted);display:flex;flex-direction:column;gap:3px;max-height:160px;overflow:auto}.day-result .dr-empty{margin-top:6px;color:var(--faint);font-size:11px}
-.sections{display:flex;flex-direction:column;gap:9px;margin-top:13px}.section{background:var(--surface);border:1px solid var(--border);border-radius:9px;overflow:hidden}.section-head{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;cursor:pointer}.section-head:hover{background:var(--surface2)}.section-name{font-size:13px;font-weight:600}.chev{color:var(--faint);font-size:9px;margin-right:7px}.collapsed .chev{display:inline-block;transform:rotate(-90deg)}.section-meta{font:10px var(--mono);color:var(--muted);display:flex;gap:8px;align-items:center}.mini{width:65px;height:4px;background:#f0a94e25;border-radius:3px;overflow:hidden}.mini i{display:block;height:100%;background:var(--teal)}
-.lessons{border-top:1px solid var(--border)}.collapsed .lessons{display:none}.lesson{display:flex;align-items:center;gap:9px;padding:8px 11px 8px 18px;border-bottom:1px solid var(--border)}.lesson:last-child{border:0}.lesson:hover{background:var(--surface2)}.check{width:16px;height:16px;border:1.5px solid var(--faint);border-radius:4px;flex:none;display:flex;align-items:center;justify-content:center;cursor:pointer}.done .check{background:var(--teal);border-color:var(--teal)}.done .check:after{content:"✓";font:bold 10px var(--sans);color:#081310}.lesson-name{flex:1;min-width:0;font-size:12.5px;cursor:pointer;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.done .lesson-name{color:var(--muted);text-decoration:line-through;text-decoration-color:var(--faint)}.lesson-time{font:10px var(--mono);color:var(--faint);white-space:nowrap}.open{font-size:10px;padding:5px 8px;white-space:nowrap}
-.empty{text-align:center;padding:40px 20px;color:var(--muted);font-size:13px}.toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:var(--surface);border:1px solid var(--border);padding:8px 13px;border-radius:7px;font:11px var(--mono);opacity:0;pointer-events:auto;transition:.2s;display:flex;align-items:center;gap:10px;max-width:90vw}.toast.show{opacity:1}.toast-undo{background:none;border:none;color:var(--teal);font:600 11px var(--mono);padding:0;cursor:pointer}.toast-undo:hover{text-decoration:underline}
-.player{display:none;position:fixed;inset:0;background:#000;z-index:20}.player.open{display:flex;flex-direction:column}.player video{width:100%;height:calc(100% - 46px);object-fit:contain;background:#000}.player-head{height:46px;display:flex;justify-content:space-between;align-items:center;gap:8px;padding:6px 9px;background:#151922}.player-head span{font:11px var(--mono);color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.player-head div{display:flex;gap:6px}
-@media(max-width:650px){.top{align-items:flex-start}.stats{text-align:left}.continue{align-items:flex-start;flex-direction:column}.course-row{grid-template-columns:1fr}.course-actions{justify-content:flex-start}}
-.backup-banner{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;background:#f0a94e14;border:1px solid #f0a94e40;border-radius:9px;padding:11px 14px;margin-bottom:14px;font-size:12px;color:var(--text)}.bb-actions{display:flex;gap:6px}
-.pace-tag{font:11px var(--mono);color:var(--muted);margin-top:10px}.pace-tag b{color:var(--teal)}
-.goals-list{display:flex;flex-direction:column;gap:9px;margin-top:12px}.goal-row{display:grid;grid-template-columns:1fr auto;gap:6px 10px;align-items:center;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:10px}.goal-name{font-size:12.5px;font-weight:600}.goal-controls{display:flex;gap:6px}.goal-controls select{background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:6px;padding:5px 6px;font:11px var(--sans)}.goal-bar-wrap{grid-column:1/3}.goal-bar{height:6px;border-radius:4px;background:#f0a94e25;overflow:hidden}.goal-fill{height:100%;background:var(--teal)}.goal-text{font:10.5px var(--mono);color:var(--muted);margin-top:4px}.goal-empty{font:10.5px var(--mono);color:var(--faint);margin-top:2px}
+:root {
+  --bg: #090d16;
+  --bg-gradient: radial-gradient(circle at 15% 15%, #131b2e 0%, #090d16 100%);
+  --surface: #111726;
+  --surface-hover: #172034;
+  --surface-elevated: #1a243b;
+  --border: rgba(255, 255, 255, 0.08);
+  --border-subtle: rgba(255, 255, 255, 0.04);
+  --border-focus: #38bdf8;
+  --text: #f1f5f9;
+  --text-muted: #94a3b8;
+  --text-faint: #64748b;
+  --teal: #10b981;
+  --teal-glow: rgba(16, 185, 129, 0.2);
+  --cyan: #06b6d4;
+  --blue: #3b82f6;
+  --amber: #f59e0b;
+  --amber-glow: rgba(245, 158, 11, 0.2);
+  --rose: #f43f5e;
+  --indigo: #6366f1;
+  --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Inter", system-ui, sans-serif;
+  --mono: ui-monospace, "SF Mono", "Cascadia Code", "JetBrains Mono", Consolas, monospace;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-full: 9999px;
+  --shadow-sm: 0 2px 4px rgba(0,0,0,0.3);
+  --shadow-md: 0 8px 20px rgba(0,0,0,0.4);
+  --shadow-lg: 0 16px 36px rgba(0,0,0,0.5);
+}
+
+* { box-sizing: border-box; }
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  background-image: var(--bg-gradient);
+  background-attachment: fixed;
+  color: var(--text);
+  font-family: var(--sans);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  padding: 24px 16px 90px;
+}
+
+.wrap {
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+/* App Header */
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+.header-left { flex: 1; min-width: 260px; }
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.brand-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font: 11px var(--mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--cyan);
+  background: rgba(6, 182, 212, 0.1);
+  border: 1px solid rgba(6, 182, 212, 0.25);
+  padding: 3px 9px;
+  border-radius: var(--radius-full);
+  margin-bottom: 8px;
+}
+.brand-pill svg { width: 12px; height: 12px; }
+h1 {
+  font-size: 26px;
+  font-weight: 750;
+  margin: 0;
+  letter-spacing: -0.02em;
+  background: linear-gradient(135deg, #ffffff 40%, #94a3b8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.subtitle {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-top: 5px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font: 11px var(--mono);
+  padding: 3px 8px;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: all 0.2s;
+  user-select: none;
+}
+.status-pill.connected {
+  background: rgba(16, 185, 129, 0.12);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+.status-pill.needs-permission {
+  background: rgba(245, 158, 11, 0.14);
+  color: #fbbf24;
+  border: 1px solid rgba(245, 158, 11, 0.4);
+  animation: pulse-border 2s infinite;
+}
+.status-pill.disconnected {
+  background: rgba(148, 163, 184, 0.1);
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+}
+.status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+}
+.status-pill.connected .status-dot {
+  box-shadow: 0 0 8px #10b981;
+}
+
+@keyframes pulse-border {
+  0%, 100% { border-color: rgba(245, 158, 11, 0.35); box-shadow: 0 0 0 rgba(245, 158, 11, 0); }
+  50% { border-color: rgba(245, 158, 11, 0.7); box-shadow: 0 0 10px rgba(245, 158, 11, 0.2); }
+}
+
+/* Card System */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  margin-top: 14px;
+  box-shadow: var(--shadow-sm);
+  transition: border-color 0.2s;
+  backdrop-filter: blur(12px);
+}
+.card:hover {
+  border-color: rgba(255, 255, 255, 0.12);
+}
+.dash-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.dash-title {
+  font-size: 14.5px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.dash-subtitle {
+  font-size: 11.5px;
+  color: var(--text-muted);
+  margin-top: 3px;
+}
+
+/* Buttons */
+button {
+  border: 1px solid var(--border);
+  background: var(--surface-hover);
+  color: var(--text);
+  border-radius: var(--radius-sm);
+  padding: 7px 12px;
+  font: 500 12.5px var(--sans);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+button:hover:not(:disabled) {
+  background: var(--surface-elevated);
+  border-color: rgba(255, 255, 255, 0.18);
+  transform: translateY(-1px);
+}
+button:active:not(:disabled) {
+  transform: translateY(0);
+}
+button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+button.primary {
+  background: linear-gradient(135deg, #10b981, #059669);
+  border-color: #10b981;
+  color: #032014;
+  font-weight: 650;
+  box-shadow: 0 2px 10px rgba(16, 185, 129, 0.25);
+}
+button.primary:hover:not(:disabled) {
+  background: linear-gradient(135deg, #34d399, #10b981);
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);
+}
+button.amber {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  border-color: #f59e0b;
+  color: #271400;
+  font-weight: 650;
+  box-shadow: 0 2px 10px rgba(245, 158, 11, 0.25);
+}
+button.amber:hover:not(:disabled) {
+  background: linear-gradient(135deg, #fbbf24, #f59e0b);
+  box-shadow: 0 4px 14px rgba(245, 158, 11, 0.35);
+}
+button.danger {
+  color: #fda4af;
+}
+button.danger:hover:not(:disabled) {
+  border-color: #e11d48;
+  background: rgba(225, 29, 72, 0.15);
+  color: #fff;
+}
+button.ghost {
+  background: transparent;
+  border-color: transparent;
+  color: var(--text-muted);
+}
+button.ghost:hover:not(:disabled) {
+  background: var(--surface-hover);
+  color: var(--text);
+  border-color: var(--border);
+}
+button.sm {
+  padding: 5px 9px;
+  font-size: 11.5px;
+}
+
+/* Reconnection Alert Banner */
+.reconnect-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(245, 158, 11, 0.05));
+  border: 1px solid rgba(245, 158, 11, 0.35);
+  border-radius: var(--radius-md);
+  padding: 12px 16px;
+  margin-top: 14px;
+  box-shadow: var(--shadow-sm);
+  animation: fadeIn 0.3s ease;
+}
+.rb-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+.rb-icon {
+  font-size: 20px;
+  flex: none;
+}
+.rb-text strong {
+  display: block;
+  font-size: 13px;
+  color: #fbbf24;
+}
+.rb-text span {
+  font-size: 11.5px;
+  color: var(--text-muted);
+}
+
+/* Dashboard Grid */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 10px;
+  margin-top: 14px;
+}
+.metric {
+  background: rgba(9, 13, 22, 0.7);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  position: relative;
+  overflow: hidden;
+}
+.metric::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: transparent;
+}
+.metric.m-emerald::after { background: #10b981; }
+.metric.m-cyan::after { background: #06b6d4; }
+.metric.m-amber::after { background: #f59e0b; }
+.metric.m-indigo::after { background: #6366f1; }
+.metric.m-rose::after { background: #f43f5e; }
+
+.metric b {
+  display: block;
+  font: 700 22px var(--mono);
+  color: var(--text);
+  letter-spacing: -0.02em;
+}
+.metric.m-emerald b { color: #34d399; }
+.metric.m-cyan b { color: #38bdf8; }
+.metric.m-amber b { color: #fbbf24; }
+.metric.m-indigo b { color: #a5b4fc; }
+
+.metric span {
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  font-weight: 500;
+  display: block;
+  margin-top: 2px;
+}
+.metric small {
+  display: block;
+  font-size: 10.5px;
+  color: var(--text-faint);
+  margin-top: 4px;
+  font-family: var(--mono);
+}
+
+/* Tabs & Switchers */
+.view-tabs {
+  display: flex;
+  gap: 4px;
+  background: rgba(9, 13, 22, 0.6);
+  padding: 3px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+}
+.view-tabs button {
+  background: transparent;
+  border: none;
+  padding: 4px 9px;
+  font-size: 11px;
+  font-family: var(--mono);
+  border-radius: 4px;
+  color: var(--text-muted);
+}
+.view-tabs button.active {
+  background: var(--surface-hover);
+  color: var(--cyan);
+  font-weight: 600;
+  box-shadow: var(--shadow-sm);
+}
+
+/* Visual Activity Area */
+.activity-visual-wrap {
+  margin-top: 14px;
+  border-top: 1px solid var(--border);
+  padding-top: 14px;
+}
+.chart-box {
+  position: relative;
+  width: 100%;
+  height: 120px;
+}
+.chart-box canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* Heatmap Grid */
+.heatmap-container {
+  display: none;
+  flex-direction: column;
+  gap: 8px;
+}
+.heatmap-grid {
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-rows: repeat(7, 12px);
+  gap: 4px;
+  overflow-x: auto;
+  padding: 6px 2px;
+}
+.heatmap-cell {
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.04);
+  cursor: pointer;
+  transition: transform 0.1s, box-shadow 0.1s;
+}
+.heatmap-cell:hover {
+  transform: scale(1.3);
+  z-index: 10;
+  outline: 1px solid #fff;
+}
+.heatmap-cell.l1 { background: rgba(16, 185, 129, 0.25); }
+.heatmap-cell.l2 { background: rgba(16, 185, 129, 0.50); }
+.heatmap-cell.l3 { background: rgba(16, 185, 129, 0.75); }
+.heatmap-cell.l4 { background: #10b981; box-shadow: 0 0 6px rgba(16, 185, 129, 0.4); }
+.heatmap-legend {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 5px;
+  font: 10px var(--mono);
+  color: var(--text-faint);
+}
+
+/* Hero Course Progress Card */
+.top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.pct-wrap {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}
+.pct {
+  font: 700 48px var(--mono);
+  color: #34d399;
+  letter-spacing: -0.04em;
+  line-height: 1;
+}
+.today-tag {
+  font: 600 12px var(--mono);
+  color: #38bdf8;
+  background: rgba(6, 182, 212, 0.12);
+  border: 1px solid rgba(6, 182, 212, 0.3);
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+}
+.stats {
+  text-align: right;
+  font: 11.5px var(--mono);
+  color: var(--text-muted);
+  line-height: 1.8;
+}
+.stats b {
+  color: var(--text);
+}
+.bar {
+  height: 10px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: var(--radius-full);
+  margin-top: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  position: relative;
+}
+.fill {
+  height: 100%;
+  background: linear-gradient(90deg, #059669, #10b981, #38bdf8);
+  width: 0%;
+  border-radius: var(--radius-full);
+  transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 0 12px rgba(16, 185, 129, 0.4);
+}
+.pace-tag {
+  font: 11.5px var(--mono);
+  color: var(--text-muted);
+  margin-top: 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.02);
+  padding: 7px 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-subtle);
+}
+.pace-tag b {
+  color: #38bdf8;
+}
+
+/* Controls */
+.controls {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 16px;
+}
+.note-tip {
+  font-size: 11.5px;
+  color: var(--text-faint);
+  line-height: 1.5;
+  margin-top: 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Continue Next Video Box */
+.continue {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(6, 182, 212, 0.06));
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  margin-top: 14px;
+  flex-wrap: wrap;
+}
+.continue small {
+  display: block;
+  color: #34d399;
+  font: 600 10.5px var(--mono);
+  letter-spacing: 0.08em;
+  margin-bottom: 4px;
+}
+.continue strong {
+  font-size: 13.5px;
+  color: var(--text);
+  display: block;
+  max-width: 500px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.continue-actions {
+  display: flex;
+  gap: 8px;
+}
+
+/* Course List */
+.course-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 14px;
+}
+.course-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 12px;
+  align-items: center;
+  background: rgba(9, 13, 22, 0.6);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  transition: all 0.2s;
+}
+.course-row:hover {
+  border-color: rgba(255, 255, 255, 0.15);
+  background: rgba(17, 23, 38, 0.7);
+}
+.course-row.current {
+  border-color: rgba(16, 185, 129, 0.45);
+  background: rgba(16, 185, 129, 0.05);
+}
+.course-name {
+  font-size: 13.5px;
+  font-weight: 650;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.course-meta {
+  font: 11px var(--mono);
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+.course-actions {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+/* Goals */
+.goals-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 14px;
+}
+.goal-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px 12px;
+  align-items: center;
+  background: rgba(9, 13, 22, 0.6);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+}
+.goal-name {
+  font-size: 13px;
+  font-weight: 600;
+}
+.goal-controls {
+  display: flex;
+  gap: 6px;
+}
+.goal-controls select, .filter select, .filter input {
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 6px 9px;
+  font: 12px var(--sans);
+  outline: none;
+}
+.goal-controls select:focus, .filter select:focus, .filter input:focus {
+  border-color: var(--border-focus);
+}
+.goal-bar-wrap {
+  grid-column: 1 / 3;
+}
+.goal-bar {
+  height: 6px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.05);
+  overflow: hidden;
+}
+.goal-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #f59e0b, #10b981);
+  border-radius: 4px;
+  transition: width 0.3s;
+}
+.goal-text {
+  font: 11px var(--mono);
+  color: var(--text-muted);
+  margin-top: 5px;
+  display: flex;
+  justify-content: space-between;
+}
+
+/* Filter Bar & Curriculum */
+.filter-tabs-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 14px;
+}
+.filter-tabs {
+  display: flex;
+  gap: 4px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 3px;
+  border-radius: var(--radius-md);
+}
+.filter-tabs button {
+  background: transparent;
+  border: none;
+  font-size: 11.5px;
+  padding: 5px 10px;
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+}
+.filter-tabs button.active {
+  background: var(--surface-hover);
+  color: var(--teal);
+  font-weight: 600;
+}
+.filter-tools {
+  display: flex;
+  gap: 8px;
+  flex: 1;
+  min-width: 280px;
+}
+.search-box {
+  position: relative;
+  flex: 1;
+}
+.search-box input {
+  width: 100%;
+  padding-left: 30px;
+}
+.search-box svg {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 13px;
+  height: 13px;
+  color: var(--text-faint);
+}
+
+/* Curriculum Sections & Lessons */
+.sections {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 14px;
+}
+.section {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  transition: border-color 0.2s;
+}
+.section-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 14px;
+  cursor: pointer;
+  user-select: none;
+  background: rgba(255, 255, 255, 0.015);
+}
+.section-head:hover {
+  background: var(--surface-hover);
+}
+.section-name {
+  font-size: 13.5px;
+  font-weight: 650;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.chev {
+  color: var(--text-faint);
+  font-size: 10px;
+  transition: transform 0.2s;
+  display: inline-block;
+}
+.collapsed .chev {
+  transform: rotate(-90deg);
+}
+.section-meta {
+  font: 11px var(--mono);
+  color: var(--text-muted);
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.mini-bar {
+  width: 70px;
+  height: 5px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.mini-bar i {
+  display: block;
+  height: 100%;
+  background: var(--teal);
+}
+
+.lessons {
+  border-top: 1px solid var(--border);
+}
+.collapsed .lessons {
+  display: none;
+}
+.lesson {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px 9px 16px;
+  border-bottom: 1px solid var(--border-subtle);
+  transition: background 0.15s;
+}
+.lesson:last-child {
+  border-bottom: 0;
+}
+.lesson:hover {
+  background: var(--surface-hover);
+}
+.check-btn {
+  width: 18px;
+  height: 18px;
+  border: 1.5px solid var(--text-faint);
+  border-radius: 5px;
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s;
+  background: transparent;
+}
+.check-btn:hover {
+  border-color: var(--teal);
+  background: rgba(16, 185, 129, 0.1);
+}
+.done .check-btn {
+  background: var(--teal);
+  border-color: var(--teal);
+  color: #032014;
+}
+.done .check-btn::after {
+  content: "✓";
+  font: 700 11px var(--sans);
+}
+.lesson-info {
+  flex: 1;
+  min-width: 0;
+  cursor: pointer;
+}
+.lesson-title {
+  font-size: 13px;
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.done .lesson-title {
+  color: var(--text-muted);
+  text-decoration: line-through;
+  text-decoration-color: var(--text-faint);
+}
+.lesson-progress-micro {
+  height: 2.5px;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 2px;
+  margin-top: 4px;
+  overflow: hidden;
+}
+.lesson-progress-micro-fill {
+  height: 100%;
+  background: var(--cyan);
+}
+.lesson-time {
+  font: 11px var(--mono);
+  color: var(--text-faint);
+  white-space: nowrap;
+}
+.note-badge {
+  font: 10px var(--mono);
+  color: #fbbf24;
+  background: rgba(245, 158, 11, 0.15);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  padding: 1px 6px;
+  border-radius: var(--radius-full);
+}
+
+/* Empty State */
+.empty {
+  text-align: center;
+  padding: 44px 20px;
+  color: var(--text-muted);
+  font-size: 13.5px;
+}
+
+/* Video Player Modal */
+.player-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.94);
+  z-index: 100;
+  backdrop-filter: blur(8px);
+}
+.player-modal.open {
+  display: flex;
+  flex-direction: column;
+}
+.player-topbar {
+  height: 52px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 16px;
+  background: #0b0f19;
+  border-bottom: 1px solid var(--border);
+}
+.player-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+.player-meta span {
+  font: 12.5px var(--sans);
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 600;
+}
+.player-meta small {
+  font: 11px var(--mono);
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+.player-controls-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: none;
+}
+.player-body {
+  flex: 1;
+  display: flex;
+  min-height: 0;
+  position: relative;
+}
+.video-wrap {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #000;
+  position: relative;
+}
+video {
+  width: 100%;
+  height: 100%;
+  max-height: calc(100vh - 52px);
+  object-fit: contain;
+  background: #000;
+  outline: none;
+}
+/* Notes Sidebar in Player */
+.player-notes-drawer {
+  width: 320px;
+  background: #0f1422;
+  border-left: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.25s ease;
+}
+.player-notes-drawer.hidden {
+  display: none;
+}
+.notes-header {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+  font-weight: 650;
+}
+.notes-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.note-item {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 8px 10px;
+  font-size: 12px;
+}
+.note-time-btn {
+  font: 600 11px var(--mono);
+  color: var(--cyan);
+  background: rgba(6, 182, 212, 0.12);
+  border: 1px solid rgba(6, 182, 212, 0.25);
+  border-radius: 4px;
+  padding: 1px 6px;
+  cursor: pointer;
+}
+.note-time-btn:hover {
+  background: rgba(6, 182, 212, 0.25);
+}
+.note-content {
+  margin-top: 4px;
+  color: var(--text);
+  word-break: break-word;
+  line-height: 1.4;
+}
+.note-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 6px;
+  font: 10px var(--mono);
+  color: var(--text-faint);
+}
+.note-delete {
+  color: var(--rose);
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+}
+.notes-input-box {
+  padding: 12px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.notes-input-box textarea {
+  width: 100%;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  padding: 8px;
+  font: 12px var(--sans);
+  resize: none;
+  height: 60px;
+  outline: none;
+}
+.notes-input-box textarea:focus {
+  border-color: var(--border-focus);
+}
+
+/* Toast */
+.toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: #172034;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  padding: 10px 16px;
+  border-radius: var(--radius-md);
+  font: 12px var(--mono);
+  color: #fff;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: var(--shadow-lg);
+  z-index: 200;
+  max-width: 90vw;
+}
+.toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+  pointer-events: auto;
+}
+.toast-undo {
+  background: none;
+  border: none;
+  color: #38bdf8;
+  font: 600 12px var(--mono);
+  padding: 0;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+/* Backup reminder */
+.backup-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  background: rgba(245, 158, 11, 0.1);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  border-radius: var(--radius-md);
+  padding: 12px 16px;
+  margin-bottom: 14px;
+  font-size: 12.5px;
+}
+
+/* Modal Helper */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(4px);
+  z-index: 150;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+.modal-overlay.open {
+  display: flex;
+}
+.modal-window {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  max-width: 520px;
+  width: 100%;
+  padding: 22px;
+  box-shadow: var(--shadow-lg);
+  max-height: 85vh;
+  overflow-y: auto;
+}
+.modal-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+}
+.modal-title {
+  font-size: 16px;
+  font-weight: 700;
+}
+.shortcut-grid {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 8px 16px;
+  font-size: 12.5px;
+  margin-top: 10px;
+}
+.shortcut-key {
+  font: 600 11px var(--mono);
+  background: var(--surface-hover);
+  border: 1px solid var(--border);
+  padding: 2px 7px;
+  border-radius: 4px;
+  color: var(--cyan);
+  text-align: center;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 650px) {
+  body { padding: 16px 12px 60px; }
+  .top { align-items: flex-start; }
+  .stats { text-align: left; }
+  .continue { align-items: flex-start; flex-direction: column; }
+  .course-row { grid-template-columns: 1fr; }
+  .course-actions { justify-content: flex-start; }
+  .player-notes-drawer { width: 100%; height: 260px; position: absolute; bottom: 0; left: 0; right: 0; }
+}
 </style>
 </head>
 <body>
 <div class="wrap">
+
+<!-- App Header -->
 <header>
-  <div class="eyebrow">Progress · Local Course Tracker</div>
-  <h1 id="title">My Courses</h1>
-  <div class="subtitle" id="subtitle">Select a course folder to begin.</div>
-  <div class="path" id="path"></div>
+  <div class="header-left">
+    <div class="brand-pill">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+      Course Tracker Pro
+    </div>
+    <h1 id="title">My Courses</h1>
+    <div class="subtitle">
+      <span id="subtitle">Select a course folder to begin.</span>
+      <span class="status-pill disconnected" id="connStatus" title="Click to manage folder connection">
+        <span class="status-dot"></span>
+        <span id="connStatusText">No Folder Linked</span>
+      </span>
+    </div>
+  </div>
+  <div class="header-actions">
+    <button class="ghost sm" id="btnShortcuts" title="Keyboard Shortcuts">⌨️ Shortcuts</button>
+    <button class="ghost sm" id="btnSnapshots" title="Automatic backups and snapshots">💾 Backups</button>
+    <button class="primary sm" id="addCourse">＋ Add Course</button>
+  </div>
 </header>
 
+<!-- One-Click Reconnect Banner (Appears when browser session reopened) -->
+<div class="reconnect-banner" id="reconnectBanner" style="display:none">
+  <div class="rb-left">
+    <div class="rb-icon">⚡</div>
+    <div class="rb-text">
+      <strong>Session Reopened: Folder Access Required</strong>
+      <span id="reconnectCourseName">Click below to reconnect the course folder with a 1-click browser permission prompt.</span>
+    </div>
+  </div>
+  <button class="amber" id="btnBannerReconnect">⚡ Reconnect Folder (1-Click)</button>
+</div>
+
+<!-- 7-Day Backup Reminder Banner -->
 <div class="backup-banner" id="backupBanner" style="display:none">
   <span id="bbText"></span>
-  <div class="bb-actions"><button class="primary" id="bbExport">Export Backup</button><button id="bbSnooze">Remind me later</button></div>
+  <div style="display:flex;gap:6px">
+    <button class="primary sm" id="bbExport">Export Backup</button>
+    <button class="sm" id="bbSnooze">Remind later</button>
+  </div>
 </div>
 
+<!-- Primary Dashboard & Motivation Metrics -->
 <div class="card">
-  <div class="dash-head"><div><div class="dash-title">Learning Dashboard</div><div class="dash-subtitle">Across all imported courses</div></div>
-    <div class="range"><button data-days="1">Today</button><button class="active" data-days="7">7d</button><button data-days="30">30d</button><button data-days="0">All</button></div>
+  <div class="dash-head">
+    <div>
+      <div class="dash-title">
+        <span>📊</span> Learning Dashboard
+      </div>
+      <div class="dash-subtitle">Track study time, streaks, and habits across your courses</div>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+      <div class="view-tabs" id="chartViewTabs">
+        <button class="active" id="tabChart">📈 Trend</button>
+        <button id="tabHeatmap">📅 Heatmap</button>
+      </div>
+      <div class="view-tabs" id="rangeTabs">
+        <button data-days="1">Today</button>
+        <button class="active" data-days="7">7d</button>
+        <button data-days="30">30d</button>
+        <button data-days="0">All</button>
+      </div>
+    </div>
   </div>
+
   <div class="dashboard-grid">
-    <div class="metric"><b id="mCourses">0</b><span>courses</span></div>
-    <div class="metric"><b id="mLearned">0m</b><span>learned</span></div>
-    <div class="metric"><b id="mCompleted">0m</b><span>completed</span></div>
-    <div class="metric"><b id="mStreak">0</b><span>day streak</span></div>
-    <div class="metric"><b id="mToday">0%</b><span>today (all courses)</span></div>
+    <div class="metric m-cyan">
+      <b id="mCourses">0</b>
+      <span>Active Courses</span>
+      <small id="mCoursesSub">0 sections total</small>
+    </div>
+    <div class="metric m-emerald">
+      <b id="mLearned">0m</b>
+      <span>Watch Time</span>
+      <small id="mLearnedSub">In selected range</small>
+    </div>
+    <div class="metric m-indigo">
+      <b id="mCompleted">0m</b>
+      <span>Completed</span>
+      <small id="mCompletedCount">0 lessons done</small>
+    </div>
+    <div class="metric m-amber">
+      <b id="mStreak">0🔥</b>
+      <span>Day Streak</span>
+      <small id="mStreakSub">Keep momentum!</small>
+    </div>
+    <div class="metric m-emerald">
+      <b id="mToday">0%</b>
+      <span>Progress Today</span>
+      <small id="mTodayDur">+0m today</small>
+    </div>
   </div>
-  <div class="chart"><canvas id="chart"></canvas></div>
-  <div class="activity" id="activity"></div>
+
+  <div class="activity-visual-wrap">
+    <!-- Trend Line Chart -->
+    <div class="chart-box" id="chartBox">
+      <canvas id="chart"></canvas>
+    </div>
+    <!-- Heatmap Grid -->
+    <div class="heatmap-container" id="heatmapContainer">
+      <div class="heatmap-grid" id="heatmapGrid"></div>
+      <div class="heatmap-legend">
+        <span>Less</span>
+        <span class="heatmap-cell" style="width:10px;height:10px"></span>
+        <span class="heatmap-cell l1" style="width:10px;height:10px"></span>
+        <span class="heatmap-cell l2" style="width:10px;height:10px"></span>
+        <span class="heatmap-cell l3" style="width:10px;height:10px"></span>
+        <span class="heatmap-cell l4" style="width:10px;height:10px"></span>
+        <span>More</span>
+      </div>
+    </div>
+  </div>
 </div>
 
+<!-- Active Course Progress Card -->
 <div class="card">
-  <div class="dash-head" id="goalsHead" style="cursor:pointer"><div><div class="dash-title"><span class="chev" id="goalsChev">▼</span>Watch-Time Goals</div><div class="dash-subtitle">Daily or weekly targets, per course and overall</div></div></div>
+  <div class="top">
+    <div>
+      <div class="pct-wrap">
+        <div class="pct" id="pct">0%</div>
+        <div class="today-tag" id="todayTag"></div>
+      </div>
+    </div>
+    <div class="stats">
+      <b id="completedText">0m</b> completed<br>
+      <b id="remainingText">0m</b> remaining<br>
+      <b id="totalText">0m</b> total
+    </div>
+  </div>
+  <div class="bar"><div class="fill" id="fill"></div></div>
+  <div class="pace-tag" id="paceTag"></div>
+
+  <div class="controls">
+    <button class="primary" id="choose">📁 Select Course Folder</button>
+    <button id="reconnectBtn" class="amber" style="display:none">⚡ Reconnect Folder</button>
+    <button id="rescan" disabled>↻ Rescan Folder</button>
+    <button id="btnExport">Export Backup</button>
+    <button id="btnImport">Import Backup</button>
+    <button class="danger" id="clear">Clear Course Progress</button>
+    <input id="backupFileInput" type="file" accept=".json,application/json" hidden>
+  </div>
+
+  <!-- Continue Learning Hero Card -->
+  <div class="continue" id="continueBox" style="display:none">
+    <div>
+      <small>UP NEXT IN THIS COURSE</small>
+      <strong id="continueName"></strong>
+    </div>
+    <div class="continue-actions">
+      <button class="primary" id="continuePlay">▶ Resume Lesson</button>
+      <button id="continueComplete">☐ Mark Done</button>
+    </div>
+  </div>
+
+  <div class="note-tip">
+    <span>💡</span>
+    <span>Auto-weighted by media length. Supports MP4, MKV, WEBM, MOV, AVI, MP3, etc. Press <kbd>?</kbd> for shortcuts.</span>
+  </div>
+</div>
+
+<!-- Goals Card -->
+<div class="card">
+  <div class="dash-head" id="goalsHead" style="cursor:pointer">
+    <div>
+      <div class="dash-title"><span class="chev" id="goalsChev">▼</span> 🎯 Daily & Weekly Targets</div>
+      <div class="dash-subtitle">Set learning time targets per course or overall</div>
+    </div>
+  </div>
   <div class="goals-list" id="goalsList"></div>
 </div>
 
+<!-- Course Progress by Date Inspector -->
 <div class="card">
-  <div class="dash-head"><div><div class="dash-title">Course Progress by Day</div><div class="dash-subtitle">Check any course's progress on a specific date</div></div></div>
-  <div class="filter" style="margin-top:13px"><select id="dayCourse"></select><input type="date" id="dayDate"></div>
-  <div class="day-result" id="dayResult"></div>
+  <div class="dash-head">
+    <div>
+      <div class="dash-title">📅 Daily Progress Inspector</div>
+      <div class="dash-subtitle">Review lessons finished and watch time on any specific date</div>
+    </div>
+  </div>
+  <div class="filter-tabs-row">
+    <div class="filter-tools">
+      <select id="dayCourse" style="flex:1"></select>
+      <input type="date" id="dayDate">
+    </div>
+  </div>
+  <div class="day-result" id="dayResult" style="margin-top:12px"></div>
 </div>
 
+<!-- All Courses Overview -->
 <div class="card">
-  <div class="dash-head"><div><div class="dash-title">My Courses</div><div class="dash-subtitle">Each course keeps its own progress</div></div>
-    <button class="primary" id="addCourse">＋ Add Course</button>
+  <div class="dash-head">
+    <div>
+      <div class="dash-title">📚 Course Library</div>
+      <div class="dash-subtitle">Switch between courses or add new course folders</div>
+    </div>
+    <button class="primary sm" id="addCourse2">＋ Add Course</button>
   </div>
   <div class="course-list" id="courseList"></div>
 </div>
 
-<div class="card">
-  <div class="top">
-    <div><div class="pct" id="pct">0%</div><div class="today-tag" id="todayTag"></div></div>
-    <div class="stats"><b id="completedText">0m</b> completed<br><b id="remainingText">0m</b> remaining<br><b id="totalText">0m</b> total</div>
+<!-- Curriculum / Lesson Search & Filter -->
+<div class="filter-tabs-row">
+  <div class="filter-tabs" id="lessonFilterTabs">
+    <button class="active" data-filter="all">All Lessons (<span id="countAll">0</span>)</button>
+    <button data-filter="in-progress">In Progress (<span id="countInProgress">0</span>)</button>
+    <button data-filter="unwatched">Unwatched (<span id="countUnwatched">0</span>)</button>
+    <button data-filter="completed">Completed (<span id="countCompleted">0</span>)</button>
   </div>
-  <div class="bar"><div class="fill" id="fill"></div></div>
-  <div class="pace-tag" id="paceTag"></div>
-  <div class="controls">
-    <button class="primary" id="choose">📁 Select Course Folder</button>
-    <button id="rescan" disabled>↻ Rescan</button>
-    <button id="export">Export Backup</button>
-    <button id="import">Import Backup</button>
-    <button class="danger" id="clear">Clear Course Progress</button>
-    <input id="backup" type="file" accept=".json,application/json" hidden>
+  <div class="filter-tools">
+    <div class="search-box">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input id="search" placeholder="Search lessons in current course…">
+    </div>
+    <select id="sectionFilter"><option value="">All sections</option></select>
+    <button id="collapseAll" class="sm">Collapse All</button>
+    <button id="expandAll" class="sm">Expand All</button>
   </div>
-  <div class="continue" id="continueBox" style="display:none">
-    <div><small>NEXT VIDEO TO WATCH</small><strong id="continueName"></strong></div>
-    <div class="continue-actions"><button class="primary" id="continuePlay">▶ Play</button><button id="continueComplete">☐ Mark Complete</button></div>
-  </div>
-  <div class="note">Progress is weighted by media duration. Supported: MP4, MKV, WEBM, MOV, AVI, M4V, WMV, FLV, MPEG, MPG, TS, MTS, M2TS, 3GP, MP3, M4A, WAV, OGG. Player shortcuts: space play/pause · ←/→ seek 10s · ↑/↓ volume · M mute · N next lesson · &lt; &gt; speed · Esc close.</div>
 </div>
 
-<div class="filter"><input id="search" placeholder="Search lessons in this course…"><select id="sectionFilter"><option value="">All sections</option></select><button id="collapseAll">Collapse All</button><button id="expandAll">Expand All</button></div>
 <div class="sections" id="sections"></div>
-<div class="empty" id="empty">Select a course folder to begin.</div>
+<div class="empty" id="empty">Select a course folder to explore lessons.</div>
+
+</div><!-- .wrap -->
+
+<!-- Custom In-App Video Player Modal -->
+<div class="player-modal" id="player">
+  <div class="player-topbar">
+    <div class="player-meta">
+      <span id="playerName">Lesson Name</span>
+      <small id="playerSection">Section</small>
+    </div>
+    <div class="player-controls-right">
+      <button class="sm" id="playerNotesToggle" title="Toggle Notes & Bookmarks">📝 Notes</button>
+      <button class="sm" id="playerMarkDone">☐ Mark Done</button>
+      <button class="sm" id="speed">1x</button>
+      <button class="sm" id="playerPip" title="Picture in Picture">🗗 PiP</button>
+      <button class="sm" id="fs">⛶ Fullscreen</button>
+      <button class="sm danger" id="close">✕ Close</button>
+    </div>
+  </div>
+  <div class="player-body">
+    <div class="video-wrap">
+      <video id="video" controls playsinline></video>
+    </div>
+    <!-- Timestamped Notes Drawer -->
+    <div class="player-notes-drawer" id="playerNotesDrawer">
+      <div class="notes-header">
+        <span>📌 Timestamped Notes</span>
+        <button class="sm ghost" id="notesCloseBtn">✕</button>
+      </div>
+      <div class="notes-list" id="notesList"></div>
+      <div class="notes-input-box">
+        <button class="sm amber" id="btnAddTimestampNote">⏱️ Stamp at Current Time (<span id="noteCurrentTime">00:00</span>)</button>
+        <textarea id="noteInput" placeholder="Type a key takeaway, code snippet, or reminder…"></textarea>
+        <button class="primary sm" id="btnSaveNote">Save Note</button>
+      </div>
+    </div>
+  </div>
 </div>
 
-<div class="player" id="player">
-  <video id="video" controls playsinline></video>
-  <div class="player-head"><span id="playerName"></span><div><button id="speed">1x</button><button id="fs">⛶ Fullscreen</button><button id="close">Close</button></div></div>
+<!-- Snapshots & Backup Modal -->
+<div class="modal-overlay" id="snapshotsModal">
+  <div class="modal-window">
+    <div class="modal-head">
+      <div class="modal-title">💾 Backup & Snapshots Manager</div>
+      <button class="ghost sm" id="closeSnapshots">✕</button>
+    </div>
+    <p style="font-size:12.5px;color:var(--text-muted);margin:0 0 14px">
+      Your data is stored locally in this browser. Export regularly or restore from automatic local snapshots.
+    </p>
+    <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap">
+      <button class="primary sm" id="btnExportModal">📥 Download Backup JSON</button>
+      <button class="sm" id="btnCopyJson">📋 Copy JSON to Clipboard</button>
+      <button class="sm" id="btnImportModal">📤 Import Backup File</button>
+    </div>
+    <div style="font-weight:650;font-size:13px;margin-bottom:8px">Automated Local Snapshots</div>
+    <div id="snapshotsList" style="display:flex;flex-direction:column;gap:6px"></div>
+  </div>
 </div>
-<div class="toast" id="toast">saved</div>
+
+<!-- Keyboard Shortcuts Modal -->
+<div class="modal-overlay" id="shortcutsModal">
+  <div class="modal-window">
+    <div class="modal-head">
+      <div class="modal-title">⌨️ Keyboard Shortcuts</div>
+      <button class="ghost sm" id="closeShortcuts">✕</button>
+    </div>
+    <div class="shortcut-grid">
+      <div class="shortcut-key">Space</div><div>Play / Pause video</div>
+      <div class="shortcut-key">← / →</div><div>Seek 5 seconds back / forward</div>
+      <div class="shortcut-key">J / L</div><div>Seek 10 seconds back / forward</div>
+      <div class="shortcut-key">↑ / ↓</div><div>Volume up / down</div>
+      <div class="shortcut-key">M</div><div>Mute / Unmute</div>
+      <div class="shortcut-key">N</div><div>Next lesson</div>
+      <div class="shortcut-key">P</div><div>Picture in Picture</div>
+      <div class="shortcut-key">F</div><div>Fullscreen toggle</div>
+      <div class="shortcut-key">&lt; / &gt;</div><div>Decrease / Increase playback speed</div>
+      <div class="shortcut-key">C</div><div>Toggle lesson completion</div>
+      <div class="shortcut-key">Esc</div><div>Close player / modals</div>
+      <div class="shortcut-key">?</div><div>Open this shortcuts dialog</div>
+    </div>
+  </div>
+</div>
+
+<!-- Toast with Undo Notification -->
+<div class="toast" id="toast"></div>
 
 <script>
 (function(){
 "use strict";
 
-const STORE="course-tracker-v4";
-const MEDIA=/\.(mp4|mkv|webm|mov|avi|m4v|wmv|flv|mpeg|mpg|ts|mts|m2ts|3gp|mp3|m4a|wav|ogg)$/i;
-let db={courses:[],active:null,activity:{}};
-let course=null,handle=null,playingItem=null,url=null,rangeDays=7,search="",section="";
-let collapsed={};
-let goalsCollapsed=false;
+const STORE = "course-tracker-v4";
+const MEDIA = /\.(mp4|mkv|webm|mov|avi|m4v|wmv|flv|mpeg|mpg|ts|mts|m2ts|3gp|mp3|m4a|wav|ogg)$/i;
 
-const SPEEDS=[0.75,1,1.25,1.5,1.75,2];
-let speedIdx=1;
-try{const sp=localStorage.getItem("course-tracker-speed");if(sp!==null){const n=Number(sp);if(n>=0&&n<SPEEDS.length)speedIdx=n}}catch(e){}
+let db = { courses: [], active: null, activity: {}, goals: {}, lastBackupAt: null, backupSnoozedUntil: null };
+let course = null;
+let handle = null;
+let handleStatus = "disconnected"; // 'connected' | 'needs-permission' | 'disconnected'
+let playingItem = null;
+let url = null;
+let rangeDays = 7;
+let search = "";
+let section = "";
+let lessonFilter = "all"; // 'all' | 'in-progress' | 'unwatched' | 'completed'
+let collapsed = {};
+let goalsCollapsed = false;
+let currentVisualTab = "chart"; // 'chart' | 'heatmap'
 
-const IDB_NAME="course-tracker-handles",IDB_STORE="handles";
-function idbOpen(){return new Promise((res,rej)=>{try{const r=indexedDB.open(IDB_NAME,1);r.onupgradeneeded=()=>r.result.createObjectStore(IDB_STORE);r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)}catch(e){rej(e)}})}
-async function idbSet(key,val){try{const d=await idbOpen();return new Promise(res=>{const tx=d.transaction(IDB_STORE,"readwrite");tx.objectStore(IDB_STORE).put(val,key);tx.oncomplete=()=>res();tx.onerror=()=>res()})}catch(e){}}
-async function idbGet(key){try{const d=await idbOpen();return new Promise(res=>{const tx=d.transaction(IDB_STORE,"readonly");const rq=tx.objectStore(IDB_STORE).get(key);rq.onsuccess=()=>res(rq.result||null);rq.onerror=()=>res(null)})}catch(e){return null}}
-async function idbDel(key){try{const d=await idbOpen();return new Promise(res=>{const tx=d.transaction(IDB_STORE,"readwrite");tx.objectStore(IDB_STORE).delete(key);tx.oncomplete=()=>res();tx.onerror=()=>res()})}catch(e){}}
-
-const $=id=>document.getElementById(id);
-const all=()=>course?(course.sections||[]).flatMap(s=>s.items||[]):[];
-
-function toast(t,undoFn){
-  const x=$("toast");x.innerHTML="";
-  const span=document.createElement("span");span.textContent=t;x.appendChild(span);
-  if(undoFn){const b=document.createElement("button");b.className="toast-undo";b.textContent="Undo";b.onclick=()=>{undoFn();x.classList.remove("show");clearTimeout(window.__toast)};x.appendChild(b)}
-  x.classList.add("show");clearTimeout(window.__toast);window.__toast=setTimeout(()=>x.classList.remove("show"),undoFn?6000:1200)
-}
-function esc(s){const d=document.createElement("div");d.textContent=s;return d.innerHTML}
-function fmt(sec){sec=Math.max(0,Math.round(Number(sec)||0));const h=Math.floor(sec/3600),m=Math.floor(sec%3600/60),s=sec%60;return h?`${h}h ${String(m).padStart(2,"0")}m`: `${m}m ${String(s).padStart(2,"0")}s`}
-function dayKey(d=new Date()){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`}
-function pctOnDate(items,k){const total=items.reduce((n,i)=>n+(i.duration||0),0);if(!total)return 0;const td=items.filter(i=>i.done&&i.doneDate===k).reduce((n,i)=>n+(i.duration||0),0);return td/total*100}
-function todayPct(items){return pctOnDate(items,dayKey())}
-function fmtPct(n){const r=Math.round(n*10)/10;return (r%1===0?r.toFixed(0):r.toFixed(1))+"%"}
-function sort(a,b){return a.localeCompare(b,undefined,{numeric:true,sensitivity:"base"})}
-function save(){try{localStorage.setItem(STORE,JSON.stringify(db))}catch(e){}}
-function load(){try{const x=localStorage.getItem(STORE);if(x){const d=JSON.parse(x);if(d&&Array.isArray(d.courses))db=d}}catch(e){}migrateActivity()}
-function current(){return db.courses.find(c=>c.id===db.active)||null}
-function sync(){if(!course)return;const c=current();if(c){c.sections=course.sections;c.courseName=course.courseName;c.last=course.last;c.updated=Date.now()}save()}
-
-async function pickFolder(){
-  if(!window.showDirectoryPicker){alert("Use a recent Chrome or Edge for folder selection.");return}
-  try{
-    const h=await window.showDirectoryPicker({mode:"read"});
-    let c=db.courses.find(x=>x.courseName===h.name);
-    if(!c){c={id:Date.now().toString(36)+Math.random().toString(36).slice(2),courseName:h.name,sections:[],last:null,updated:Date.now()};db.courses.push(c)}
-    db.active=c.id;course=c;handle=h;save();idbSet(c.id,h);
-    await scan();toast("course imported");renderAll();
-  }catch(e){if(e.name!=="AbortError")toast("could not select folder")}
-}
-
-async function scan(){
-  if(!handle)return;
-  const old=new Map(all().map(i=>[i.path,i]));
-  const sections=[];
-  const direct=[];
-  const dirs=[];
-  for await(const [name,e] of handle.entries()){
-    if(e.kind==="file"&&MEDIA.test(name))direct.push({name,path:name});
-    else if(e.kind==="directory")dirs.push([name,e]);
+const SPEEDS = [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2, 2.5];
+let speedIdx = 2; // 1x default
+try {
+  const sp = localStorage.getItem("course-tracker-speed");
+  if (sp !== null) {
+    const n = Number(sp);
+    if (n >= 0 && n < SPEEDS.length) speedIdx = n;
   }
-  direct.sort((a,b)=>sort(a.name,b.name));if(direct.length)sections.push({name:"General",items:direct});
-  dirs.sort((a,b)=>sort(a[0],b[0]));
-  async function walk(dir,parts){
-    const files=[],sub=[];
-    for await(const [name,e] of dir.entries()){
-      if(e.kind==="file"&&MEDIA.test(name))files.push({name,path:parts.concat(name).join("/")});
-      else if(e.kind==="directory")sub.push([name,e]);
+} catch(e){}
+
+/* IndexedDB Management for Persistent Handles and Snapshots */
+const IDB_NAME = "course-tracker-handles";
+const IDB_STORE_HANDLES = "handles";
+const IDB_STORE_SNAPSHOTS = "snapshots";
+
+function idbOpen() {
+  return new Promise((res, rej) => {
+    try {
+      const r = indexedDB.open(IDB_NAME, 2);
+      r.onupgradeneeded = e => {
+        const d = r.result;
+        if (!d.objectStoreNames.contains(IDB_STORE_HANDLES)) {
+          d.createObjectStore(IDB_STORE_HANDLES);
+        }
+        if (!d.objectStoreNames.contains(IDB_STORE_SNAPSHOTS)) {
+          d.createObjectStore(IDB_STORE_SNAPSHOTS, { keyPath: "id" });
+        }
+      };
+      r.onsuccess = () => res(r.result);
+      r.onerror = () => rej(r.error);
+    } catch(e) { rej(e); }
+  });
+}
+
+async function idbSetHandle(key, val) {
+  try {
+    const d = await idbOpen();
+    return new Promise(res => {
+      const tx = d.transaction(IDB_STORE_HANDLES, "readwrite");
+      tx.objectStore(IDB_STORE_HANDLES).put(val, key);
+      tx.oncomplete = () => res();
+      tx.onerror = () => res();
+    });
+  } catch(e){}
+}
+
+async function idbGetHandle(key) {
+  try {
+    const d = await idbOpen();
+    return new Promise(res => {
+      const tx = d.transaction(IDB_STORE_HANDLES, "readonly");
+      const rq = tx.objectStore(IDB_STORE_HANDLES).get(key);
+      rq.onsuccess = () => res(rq.result || null);
+      rq.onerror = () => res(null);
+    });
+  } catch(e) { return null; }
+}
+
+async function idbDelHandle(key) {
+  try {
+    const d = await idbOpen();
+    return new Promise(res => {
+      const tx = d.transaction(IDB_STORE_HANDLES, "readwrite");
+      tx.objectStore(IDB_STORE_HANDLES).delete(key);
+      tx.oncomplete = () => res();
+      tx.onerror = () => res();
+    });
+  } catch(e){}
+}
+
+async function idbSaveSnapshot(data) {
+  try {
+    const d = await idbOpen();
+    return new Promise(res => {
+      const tx = d.transaction(IDB_STORE_SNAPSHOTS, "readwrite");
+      const st = tx.objectStore(IDB_STORE_SNAPSHOTS);
+      const snapshot = {
+        id: Date.now(),
+        date: new Date().toISOString(),
+        courseCount: (data.courses || []).length,
+        courses: data.courses.map(c => c.courseName),
+        data: JSON.stringify(data)
+      };
+      st.put(snapshot);
+      // Keep only last 8 snapshots
+      const req = st.getAllKeys();
+      req.onsuccess = () => {
+        const keys = req.result;
+        if (keys.length > 8) {
+          keys.slice(0, keys.length - 8).forEach(k => st.delete(k));
+        }
+      };
+      tx.oncomplete = () => res();
+      tx.onerror = () => res();
+    });
+  } catch(e){}
+}
+
+async function idbGetSnapshots() {
+  try {
+    const d = await idbOpen();
+    return new Promise(res => {
+      const tx = d.transaction(IDB_STORE_SNAPSHOTS, "readonly");
+      const req = tx.objectStore(IDB_STORE_SNAPSHOTS).getAll();
+      req.onsuccess = () => res(req.result || []);
+      req.onerror = () => res([]);
+    });
+  } catch(e) { return []; }
+}
+
+/* Helpers */
+const $ = id => document.getElementById(id);
+const all = () => course ? (course.sections || []).flatMap(s => s.items || []) : [];
+
+function toast(text, undoFn) {
+  const x = $("toast");
+  x.innerHTML = "";
+  const span = document.createElement("span");
+  span.textContent = text;
+  x.appendChild(span);
+  if (undoFn) {
+    const b = document.createElement("button");
+    b.className = "toast-undo";
+    b.textContent = "Undo";
+    b.onclick = () => { undoFn(); x.classList.remove("show"); clearTimeout(window.__toast); };
+    x.appendChild(b);
+  }
+  x.classList.add("show");
+  clearTimeout(window.__toast);
+  window.__toast = setTimeout(() => x.classList.remove("show"), undoFn ? 6000 : 1800);
+}
+
+function esc(s) {
+  const d = document.createElement("div");
+  d.textContent = s || "";
+  return d.innerHTML;
+}
+
+function fmt(sec) {
+  sec = Math.max(0, Math.round(Number(sec) || 0));
+  const h = Math.floor(sec / 3600);
+  const m = Math.floor((sec % 3600) / 60);
+  const s = sec % 60;
+  return h ? `${h}h ${String(m).padStart(2, "0")}m` : `${m}m ${String(s).padStart(2, "0")}s`;
+}
+
+function fmtTimestamp(sec) {
+  sec = Math.max(0, Math.floor(Number(sec) || 0));
+  const h = Math.floor(sec / 3600);
+  const m = Math.floor((sec % 3600) / 60);
+  const s = sec % 60;
+  return h ? `${h}:${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}` : `${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
+}
+
+function dayKey(d = new Date()) {
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+}
+
+function pctOnDate(items, k) {
+  const total = items.reduce((n, i) => n + (i.duration || 0), 0);
+  if (!total) return 0;
+  const td = items.filter(i => i.done && i.doneDate === k).reduce((n, i) => n + (i.duration || 0), 0);
+  return (td / total) * 100;
+}
+
+function todayPct(items) {
+  return pctOnDate(items, dayKey());
+}
+
+function fmtPct(n) {
+  const r = Math.round(n * 10) / 10;
+  return (r % 1 === 0 ? r.toFixed(0) : r.toFixed(1)) + "%";
+}
+
+function sort(a, b) {
+  return a.localeCompare(b, undefined, { numeric: true, sensitivity: "base" });
+}
+
+function save() {
+  try {
+    localStorage.setItem(STORE, JSON.stringify(db));
+    idbSaveSnapshot(db);
+  } catch(e){}
+}
+
+function load() {
+  try {
+    const x = localStorage.getItem(STORE);
+    if (x) {
+      const d = JSON.parse(x);
+      if (d && Array.isArray(d.courses)) db = d;
     }
-    files.sort((a,b)=>sort(a.name,b.name));sub.sort((a,b)=>sort(a[0],b[0]));
-    if(files.length)sections.push({name:parts.join(" / "),items:files});
-    for(const [n,d] of sub)await walk(d,parts.concat(n));
-  }
-  for(const [n,d] of dirs)await walk(d,[n]);
-
-  for(const s of sections)for(const i of s.items){
-    const o=old.get(i.path);
-    i.done=o?!!o.done:false;i.position=o?Number(o.position)||0:0;i.duration=o?Number(o.duration)||0:0;
-  }
-  course.sections=sections;course.updated=Date.now();sync();renderAll();
-  await readDurations(sections);
-  sync();renderAll();
+  } catch(e){}
+  migrateActivity();
 }
 
-async function readDurations(sections){
-  let changed=0;
-  for(const s of sections)for(const i of s.items){
-    if(i.duration)continue;
-    try{
-      const f=await fileAt(i.path),v=document.createElement("video"),u=URL.createObjectURL(f);
-      i.duration=await new Promise(resolve=>{
-        v.preload="metadata";v.onloadedmetadata=()=>resolve(Number.isFinite(v.duration)?v.duration:0);v.onerror=()=>resolve(0);v.src=u;
-      });
-      URL.revokeObjectURL(u);v.remove();changed++;
-      if(changed%5===0)render();
-    }catch(e){}
+function current() {
+  return db.courses.find(c => c.id === db.active) || null;
+}
+
+function sync() {
+  if (!course) return;
+  const c = current();
+  if (c) {
+    c.sections = course.sections;
+    c.courseName = course.courseName;
+    c.last = course.last;
+    c.updated = Date.now();
   }
-}
-
-async function fileAt(path){
-  const parts=path.split("/");let d=handle;
-  for(let i=0;i<parts.length-1;i++)d=await d.getDirectoryHandle(parts[i]);
-  return await (await d.getFileHandle(parts[parts.length-1])).getFile();
-}
-
-function activity(sec){
-  if(sec<=0||!course)return;
-  const cid=course.id,k=dayKey();
-  db.activity[cid]=db.activity[cid]||{};
-  db.activity[cid][k]=(Number(db.activity[cid][k])||0)+sec;
   save();
 }
-function activityDay(cid,k){return Number((db.activity[cid]||{})[k])||0}
-function activityDayAll(k){let s=0;for(const cid in db.activity)s+=activityDay(cid,k);return s}
-function activityAllDayKeys(){const s=new Set();for(const cid in db.activity)for(const k in db.activity[cid])s.add(k);return s}
-function migrateActivity(){
-  db.activity=db.activity||{};
-  const keys=Object.keys(db.activity);
-  const legacy={};let found=false;
-  for(const k of keys){if(typeof db.activity[k]==="number"){legacy[k]=db.activity[k];delete db.activity[k];found=true}}
-  if(found)db.activity.__legacy=Object.assign(db.activity.__legacy||{},legacy);
+
+/* File System Handle & Permission Resolution (Primary Fix) */
+async function checkHandleStatus(c = course) {
+  if (!c) {
+    handle = null;
+    handleStatus = "disconnected";
+    renderConnectionStatus();
+    return "disconnected";
+  }
+  try {
+    const h = await idbGetHandle(c.id);
+    if (!h) {
+      handle = null;
+      handleStatus = "disconnected";
+      renderConnectionStatus();
+      return "disconnected";
+    }
+    handle = h;
+    const p = await h.queryPermission({ mode: "read" });
+    if (p === "granted") {
+      handleStatus = "connected";
+    } else {
+      handleStatus = "needs-permission";
+    }
+  } catch(e) {
+    handle = null;
+    handleStatus = "disconnected";
+  }
+  renderConnectionStatus();
+  return handleStatus;
 }
 
-async function play(item){
-  if(!handle)return toast("Select the course folder first");
-  try{
-    const f=await fileAt(item.path);
-    if(url)URL.revokeObjectURL(url);
-    url=URL.createObjectURL(f);playingItem=item;
-    $("video").src=url;$("video").currentTime=Math.min(item.position||0,item.duration||Infinity);
+function renderConnectionStatus() {
+  const pill = $("connStatus");
+  const text = $("connStatusText");
+  const banner = $("reconnectBanner");
+  const recBtn = $("reconnectBtn");
+  const chooseBtn = $("choose");
+
+  pill.className = "status-pill " + handleStatus;
+
+  if (handleStatus === "connected") {
+    text.textContent = "Folder Connected";
+    pill.title = "Connected to local course files. Videos can play.";
+    banner.style.display = "none";
+    recBtn.style.display = "none";
+    chooseBtn.textContent = "📁 Change Folder";
+  } else if (handleStatus === "needs-permission") {
+    text.textContent = "⚡ Reconnect (1-Click)";
+    pill.title = "Browser session restarted. Click to grant folder permission.";
+    banner.style.display = "flex";
+    $("reconnectCourseName").textContent = `Course "${course?.courseName || ''}" is ready. Reconnect with a 1-click permission prompt.`;
+    recBtn.style.display = "inline-flex";
+    chooseBtn.textContent = "📁 Browse Folder";
+  } else {
+    text.textContent = "No Folder Linked";
+    pill.title = "Select course folder from hard drive to begin.";
+    banner.style.display = "none";
+    recBtn.style.display = "none";
+    chooseBtn.textContent = "📁 Select Course Folder";
+  }
+}
+
+/* Ensure directory handle is ready for reading; prompts permission seamlessly on user action */
+async function ensureHandle() {
+  if (!course) {
+    toast("Please select a course first");
+    return null;
+  }
+  if (handle && handleStatus === "connected") {
+    return handle;
+  }
+  const h = handle || await idbGetHandle(course.id);
+  if (h) {
+    try {
+      let p = await h.queryPermission({ mode: "read" });
+      if (p !== "granted") {
+        p = await h.requestPermission({ mode: "read" });
+      }
+      if (p === "granted") {
+        handle = h;
+        handleStatus = "connected";
+        renderConnectionStatus();
+        renderAll();
+        return handle;
+      }
+    } catch(e) {
+      console.warn("Could not request permission:", e);
+    }
+  }
+  // If stored handle doesn't exist or failed, prompt to select folder
+  toast("Select folder to grant access");
+  await pickFolder();
+  return handle;
+}
+
+async function reconnectCurrentFolder() {
+  if (!course) return;
+  try {
+    const h = handle || await idbGetHandle(course.id);
+    if (!h) {
+      await pickFolder();
+      return;
+    }
+    let p = await h.queryPermission({ mode: "read" });
+    if (p !== "granted") {
+      p = await h.requestPermission({ mode: "read" });
+    }
+    if (p === "granted") {
+      handle = h;
+      handleStatus = "connected";
+      toast(`Connected to "${course.courseName}"`);
+      await scan(false);
+      renderAll();
+    } else {
+      toast("Folder permission was not granted");
+    }
+  } catch(e) {
+    toast("Could not access folder. Please browse to re-select.");
+    await pickFolder();
+  }
+}
+
+async function pickFolder() {
+  if (!window.showDirectoryPicker) {
+    alert("Please use a modern browser (Chrome, Edge, Brave, Opera) with File System Access support.");
+    return;
+  }
+  try {
+    const h = await window.showDirectoryPicker({ mode: "read" });
+    let c = db.courses.find(x => x.courseName === h.name);
+    if (!c) {
+      c = {
+        id: Date.now().toString(36) + Math.random().toString(36).slice(2),
+        courseName: h.name,
+        sections: [],
+        last: null,
+        updated: Date.now()
+      };
+      db.courses.push(c);
+    }
+    db.active = c.id;
+    course = c;
+    handle = h;
+    handleStatus = "connected";
+    save();
+    await idbSetHandle(c.id, h);
+    await scan(true);
+    toast("Course imported & connected!");
+    renderAll();
+  } catch(e) {
+    if (e.name !== "AbortError") {
+      toast("Could not select folder");
+    }
+  }
+}
+
+/* File Scanning & Duration Extraction */
+async function scan(readDur = true) {
+  if (!handle) return;
+  const old = new Map(all().map(i => [i.path, i]));
+  const sections = [];
+  const direct = [];
+  const dirs = [];
+
+  for await (const [name, e] of handle.entries()) {
+    if (e.kind === "file" && MEDIA.test(name)) direct.push({ name, path: name });
+    else if (e.kind === "directory") dirs.push([name, e]);
+  }
+  direct.sort((a, b) => sort(a.name, b.name));
+  if (direct.length) sections.push({ name: "General", items: direct });
+
+  dirs.sort((a, b) => sort(a[0], b[0]));
+  async function walk(dir, parts) {
+    const files = [], sub = [];
+    for await (const [name, e] of dir.entries()) {
+      if (e.kind === "file" && MEDIA.test(name)) files.push({ name, path: parts.concat(name).join("/") });
+      else if (e.kind === "directory") sub.push([name, e]);
+    }
+    files.sort((a, b) => sort(a.name, b.name));
+    sub.sort((a, b) => sort(a[0], b[0]));
+    if (files.length) sections.push({ name: parts.join(" / "), items: files });
+    for (const [n, d] of sub) await walk(d, parts.concat(n));
+  }
+  for (const [n, d] of dirs) await walk(d, [n]);
+
+  for (const s of sections) {
+    for (const i of s.items) {
+      const o = old.get(i.path);
+      i.done = o ? !!o.done : false;
+      i.position = o ? Number(o.position) || 0 : 0;
+      i.duration = o ? Number(o.duration) || 0 : 0;
+      i.doneDate = o ? o.doneDate : null;
+      i.notes = (o && Array.isArray(o.notes)) ? o.notes : [];
+    }
+  }
+
+  course.sections = sections;
+  course.updated = Date.now();
+  sync();
+  renderAll();
+
+  if (readDur) {
+    await readDurations(sections);
+    sync();
+    renderAll();
+  }
+}
+
+async function readDurations(sections) {
+  let changed = 0;
+  for (const s of sections) {
+    for (const i of s.items) {
+      if (i.duration) continue;
+      try {
+        const f = await fileAt(i.path);
+        const v = document.createElement("video");
+        const u = URL.createObjectURL(f);
+        i.duration = await new Promise(resolve => {
+          v.preload = "metadata";
+          v.onloadedmetadata = () => resolve(Number.isFinite(v.duration) ? v.duration : 0);
+          v.onerror = () => resolve(0);
+          v.src = u;
+        });
+        URL.revokeObjectURL(u);
+        v.remove();
+        changed++;
+        if (changed % 5 === 0) render();
+      } catch(e){}
+    }
+  }
+}
+
+async function fileAt(path) {
+  const parts = path.split("/");
+  let d = handle;
+  for (let i = 0; i < parts.length - 1; i++) {
+    d = await d.getDirectoryHandle(parts[i]);
+  }
+  const fh = await d.getFileHandle(parts[parts.length - 1]);
+  return await fh.getFile();
+}
+
+/* Activity Tracking */
+function activity(sec) {
+  if (sec <= 0 || !course) return;
+  const cid = course.id;
+  const k = dayKey();
+  db.activity[cid] = db.activity[cid] || {};
+  db.activity[cid][k] = (Number(db.activity[cid][k]) || 0) + sec;
+  save();
+}
+
+function activityDay(cid, k) {
+  return Number((db.activity[cid] || {})[k]) || 0;
+}
+
+function activityDayAll(k) {
+  let s = 0;
+  for (const cid in db.activity) s += activityDay(cid, k);
+  return s;
+}
+
+function activityAllDayKeys() {
+  const s = new Set();
+  for (const cid in db.activity) {
+    for (const k in db.activity[cid]) s.add(k);
+  }
+  return s;
+}
+
+function migrateActivity() {
+  db.activity = db.activity || {};
+  const keys = Object.keys(db.activity);
+  const legacy = {};
+  let found = false;
+  for (const k of keys) {
+    if (typeof db.activity[k] === "number") {
+      legacy[k] = db.activity[k];
+      delete db.activity[k];
+      found = true;
+    }
+  }
+  if (found) db.activity.__legacy = Object.assign(db.activity.__legacy || {}, legacy);
+}
+
+/* Video Playback & Custom Modal Controls */
+async function play(item) {
+  const h = await ensureHandle();
+  if (!h) return;
+
+  try {
+    const f = await fileAt(item.path);
+    if (url) URL.revokeObjectURL(url);
+    url = URL.createObjectURL(f);
+    playingItem = item;
+
+    const v = $("video");
+    v.src = url;
+    v.currentTime = Math.min(item.position || 0, item.duration || Infinity);
     applySpeed();
-    $("playerName").textContent=item.name;$("player").classList.add("open");
-    try{await $("player").requestFullscreen()}catch(e){}
-    try{await $("video").play()}catch(e){}
-    course.last=item.path;sync();render();
-  }catch(e){toast("Unable to open media file")}
+
+    $("playerName").textContent = item.name;
+    const parentSection = (course.sections || []).find(s => (s.items || []).some(x => x.path === item.path));
+    $("playerSection").textContent = parentSection ? parentSection.name : "";
+    updatePlayerMarkDoneBtn();
+    renderPlayerNotes();
+
+    $("player").classList.add("open");
+    try { await v.play(); } catch(e){}
+
+    course.last = item.path;
+    sync();
+    render();
+  } catch(e) {
+    console.error(e);
+    toast("Unable to open media file. File may have been moved.");
+  }
 }
 
-function closePlayer(){
-  const v=$("video");if(playingItem){playingItem.position=v.currentTime||0;sync()}
-  v.pause();v.removeAttribute("src");v.load();if(url)URL.revokeObjectURL(url);url=null;playingItem=null;
-  $("player").classList.remove("open");if(document.fullscreenElement)document.exitFullscreen().catch(()=>{});render();
+function closePlayer() {
+  const v = $("video");
+  if (playingItem) {
+    playingItem.position = v.currentTime || 0;
+    sync();
+  }
+  v.pause();
+  v.removeAttribute("src");
+  v.load();
+  if (url) URL.revokeObjectURL(url);
+  url = null;
+  playingItem = null;
+  $("player").classList.remove("open");
+  if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+  renderAll();
 }
 
-async function nextAfter(item){
-  const a=all(),idx=a.findIndex(x=>x.path===item.path);
-  return a.slice(idx+1).find(x=>!x.done)||a.find(x=>!x.done)||null;
+async function nextAfter(item) {
+  const a = all();
+  const idx = a.findIndex(x => x.path === item.path);
+  return a.slice(idx + 1).find(x => !x.done) || a.find(x => !x.done) || null;
 }
 
-$("video").addEventListener("timeupdate",()=>{
-  if(!playingItem)return;
-  const v=$("video"),p=v.currentTime||0,last=playingItem.position||0;
-  const delta=Math.max(0,Math.min(1.5,p-last));
-  playingItem.position=p;if(delta>0&&!v.paused)activity(delta);
-  if(Math.floor(p)%5===0)sync();
+$("video").addEventListener("timeupdate", () => {
+  if (!playingItem) return;
+  const v = $("video");
+  const p = v.currentTime || 0;
+  const last = playingItem.position || 0;
+  const delta = Math.max(0, Math.min(1.5, p - last));
+  playingItem.position = p;
+  if (delta > 0 && !v.paused) activity(delta);
+  if (Math.floor(p) % 5 === 0) sync();
+  $("noteCurrentTime").textContent = fmtTimestamp(p);
   render();
 });
-$("video").addEventListener("ended",async()=>{
-  if(!playingItem)return;
-  playingItem.done=true;playingItem.position=playingItem.duration||$("video").duration||0;playingItem.doneDate=dayKey();sync();renderAll();
-  const n=await nextAfter(playingItem);
-  if(n)await play(n);else{closePlayer();toast("Course complete 🎉")}
-});
-$("close").onclick=closePlayer;
-$("fs").onclick=async()=>{try{if(document.fullscreenElement)await document.exitFullscreen();else await $("player").requestFullscreen()}catch(e){}};
-function applySpeed(){$("video").playbackRate=SPEEDS[speedIdx];$("speed").textContent=SPEEDS[speedIdx]+"x"}
-function setSpeed(idx){speedIdx=Math.min(SPEEDS.length-1,Math.max(0,idx));applySpeed();try{localStorage.setItem("course-tracker-speed",String(speedIdx))}catch(e){}}
-$("speed").onclick=()=>setSpeed((speedIdx+1)%SPEEDS.length);
-document.addEventListener("keydown",e=>{
-  if(!$("player").classList.contains("open"))return;
-  const tag=(document.activeElement&&document.activeElement.tagName)||"";
-  if(tag==="INPUT"||tag==="TEXTAREA"||tag==="SELECT")return;
-  const v=$("video");
-  if(e.code==="Space"){e.preventDefault();v.paused?v.play():v.pause()}
-  else if(e.code==="ArrowRight"){e.preventDefault();v.currentTime=Math.min(v.duration||Infinity,v.currentTime+10)}
-  else if(e.code==="ArrowLeft"){e.preventDefault();v.currentTime=Math.max(0,v.currentTime-10)}
-  else if(e.code==="ArrowUp"){e.preventDefault();v.volume=Math.min(1,v.volume+0.1)}
-  else if(e.code==="ArrowDown"){e.preventDefault();v.volume=Math.max(0,v.volume-0.1)}
-  else if(e.key==="m"||e.key==="M"){v.muted=!v.muted}
-  else if(e.key==="n"||e.key==="N"){nextAfter(playingItem).then(n=>{if(n)play(n)})}
-  else if(e.key==="."||e.key===">"){setSpeed(speedIdx+1)}
-  else if(e.key===","||e.key==="<"){setSpeed(speedIdx-1)}
-  else if(e.key==="Escape"){closePlayer()}
+
+$("video").addEventListener("ended", async () => {
+  if (!playingItem) return;
+  playingItem.done = true;
+  playingItem.position = playingItem.duration || $("video").duration || 0;
+  playingItem.doneDate = dayKey();
+  sync();
+  renderAll();
+  const n = await nextAfter(playingItem);
+  if (n) {
+    toast(`Playing next: ${n.name}`);
+    await play(n);
+  } else {
+    closePlayer();
+    toast("🎉 Course Complete! Excellent work!");
+  }
 });
 
-function render(){
-  const items=all(),totalDur=items.reduce((n,i)=>n+(i.duration||0),0),doneDur=items.filter(i=>i.done).reduce((n,i)=>n+(i.duration||0),0),pct=totalDur?Math.round(doneDur/totalDur*100):0;
-  const tPct=items.length?todayPct(items):0;
-  $("todayTag").textContent=tPct>0?`+${fmtPct(tPct)} today`:"";
-  const paceEl=$("paceTag");
-  if(paceEl){
-    const p=estimatePace(items);
-    paceEl.innerHTML=!course?"":!p?"":p.done?"🎉 All caught up on this course.":p.noPace?"Not enough recent activity (last 14 days) to estimate a finish date yet.":`At ~<b>${fmt(p.perDaySec)}</b>/day (last 14 days avg), you'll finish in ~${p.days} day${p.days===1?"":"s"} — around <b>${fmtDate(p.finish)}</b>.`;
+$("close").onclick = closePlayer;
+$("fs").onclick = async () => {
+  try {
+    if (document.fullscreenElement) await document.exitFullscreen();
+    else await $("player").requestFullscreen();
+  } catch(e){}
+};
+
+$("playerPip").onclick = async () => {
+  const v = $("video");
+  try {
+    if (document.pictureInPictureElement) await document.exitPictureInPicture();
+    else if (document.pictureInPictureEnabled) await v.requestPictureInPicture();
+  } catch(e){}
+};
+
+function applySpeed() {
+  $("video").playbackRate = SPEEDS[speedIdx];
+  $("speed").textContent = SPEEDS[speedIdx] + "x";
+}
+
+function setSpeed(idx) {
+  speedIdx = Math.min(SPEEDS.length - 1, Math.max(0, idx));
+  applySpeed();
+  try { localStorage.setItem("course-tracker-speed", String(speedIdx)); } catch(e){}
+}
+$("speed").onclick = () => setSpeed((speedIdx + 1) % SPEEDS.length);
+
+function updatePlayerMarkDoneBtn() {
+  if (!playingItem) return;
+  const btn = $("playerMarkDone");
+  btn.textContent = playingItem.done ? "✓ Done" : "☐ Mark Done";
+  btn.className = playingItem.done ? "sm primary" : "sm";
+}
+
+$("playerMarkDone").onclick = () => {
+  if (!playingItem) return;
+  playingItem.done = !playingItem.done;
+  if (playingItem.done) {
+    playingItem.position = playingItem.duration || playingItem.position;
+    playingItem.doneDate = dayKey();
+  } else {
+    playingItem.doneDate = null;
   }
-  $("title").textContent=course?course.courseName:"My Courses";
-  $("subtitle").textContent=course?`${course.sections.length} sections · ${items.length} media files`:"Select a course folder to begin.";
-  $("path").textContent=course?course.courseName:"";
-  $("pct").textContent=pct+"%";$("completedText").textContent=fmt(doneDur);$("remainingText").textContent=fmt(Math.max(0,totalDur-doneDur));$("totalText").textContent=fmt(totalDur);$("fill").style.width=pct+"%";
-  $("rescan").disabled=!handle;
-  const next=items.find(i=>!i.done);
-  $("continueBox").style.display=next?"flex":"none";
-  if(next){$("continueName").textContent=next.name+(next.position?` · resume at ${fmt(next.position)}`:"");$("continueComplete").onclick=()=>{next.done=true;next.position=next.duration||0;next.doneDate=dayKey();sync();renderAll()};$("continuePlay").onclick=()=>play(next)}
-  const select=$("sectionFilter"),wanted=select.value;
-  select.innerHTML='<option value="">All sections</option>'+(course?course.sections.map(s=>`<option value="${esc(s.name)}">${esc(s.name)}</option>`).join(""):"");
-  select.value=course&&course.sections.some(s=>s.name===wanted)?wanted:"";
-  $("sections").innerHTML="";
-  if(!items.length){$("empty").style.display="block";return}
-  $("empty").style.display="none";
-  const term=search.toLowerCase();
-  let count=0;
-  for(const s of (course?course.sections:[])){
-    if(section&&section!==s.name)continue;
-    const visible=s.items.filter(i=>!term||i.name.toLowerCase().includes(term)||i.path.toLowerCase().includes(term));
-    if(!visible.length)continue;count++;
-    const sd=visible.filter(i=>i.done).reduce((n,i)=>n+(i.duration||0),0),st=visible.reduce((n,i)=>n+(i.duration||0),0),sp=st?Math.round(sd/st*100):0;
-    const box=document.createElement("div");
-    const key=(course?course.id:"")+"::"+s.name;
-    const isCollapsed=term?false:collapsed[key]!==false;
-    box.className="section"+(isCollapsed?" collapsed":"");
-    const head=document.createElement("div");head.className="section-head";head.innerHTML=`<div class="section-name"><span class="chev">▼</span>${esc(s.name)}</div><div class="section-meta"><span class="mini"><i style="width:${sp}%"></i></span>${sp}%</div>`;
-    head.onclick=()=>{collapsed[key]=!isCollapsed;render()};
-    const ls=document.createElement("div");ls.className="lessons";
-    if(!isCollapsed){
-      for(const i of visible){
-        const row=document.createElement("div");row.className="lesson"+(i.done?" done":"");
-        const check=document.createElement("div");check.className="check";check.onclick=e=>{e.stopPropagation();i.done=!i.done;if(i.done){i.position=i.duration||i.position;i.doneDate=dayKey()}else{i.doneDate=null}sync();renderAll()};
-        const nm=document.createElement("div");nm.className="lesson-name";nm.textContent=i.name;nm.title=i.path;nm.onclick=()=>play(i);
-        const tm=document.createElement("div");tm.className="lesson-time";tm.textContent=i.duration?fmt(i.duration):"…";
-        const op=document.createElement("button");op.className="open";op.textContent="▶ Play";op.onclick=()=>play(i);
-        row.append(check,nm,tm,op);ls.appendChild(row);
+  updatePlayerMarkDoneBtn();
+  sync();
+  renderAll();
+};
+
+/* Notes & Bookmarks in Player */
+$("playerNotesToggle").onclick = () => {
+  $("playerNotesDrawer").classList.toggle("hidden");
+};
+$("notesCloseBtn").onclick = () => {
+  $("playerNotesDrawer").classList.add("hidden");
+};
+
+$("btnAddTimestampNote").onclick = () => {
+  const v = $("video");
+  const t = Math.floor(v.currentTime || 0);
+  $("noteInput").value = `[${fmtTimestamp(t)}] `;
+  $("noteInput").focus();
+};
+
+$("btnSaveNote").onclick = () => {
+  if (!playingItem) return;
+  const txt = $("noteInput").value.trim();
+  if (!txt) return;
+  const v = $("video");
+  const t = Math.floor(v.currentTime || 0);
+  playingItem.notes = playingItem.notes || [];
+  playingItem.notes.push({
+    id: Date.now().toString(36),
+    time: t,
+    text: txt,
+    date: dayKey()
+  });
+  $("noteInput").value = "";
+  sync();
+  renderPlayerNotes();
+  render();
+  toast("Note saved");
+};
+
+function renderPlayerNotes() {
+  const list = $("notesList");
+  list.innerHTML = "";
+  if (!playingItem || !playingItem.notes || !playingItem.notes.length) {
+    list.innerHTML = '<div style="font-size:12px;color:var(--text-faint);text-align:center;padding:24px 8px">No notes for this lesson yet.<br>Click "Stamp at Current Time" to create one.</div>';
+    return;
+  }
+  playingItem.notes.slice().sort((a,b) => a.time - b.time).forEach(n => {
+    const item = document.createElement("div");
+    item.className = "note-item";
+    item.innerHTML = `
+      <div><button class="note-time-btn" data-time="${n.time}">▶ ${fmtTimestamp(n.time)}</button></div>
+      <div class="note-content">${esc(n.text)}</div>
+      <div class="note-meta">
+        <span>${n.date || ''}</span>
+        <button class="note-delete" data-id="${n.id}">Delete</button>
+      </div>
+    `;
+    item.querySelector(".note-time-btn").onclick = () => {
+      $("video").currentTime = n.time;
+      $("video").play().catch(()=>{});
+    };
+    item.querySelector(".note-delete").onclick = () => {
+      playingItem.notes = playingItem.notes.filter(x => x.id !== n.id);
+      sync();
+      renderPlayerNotes();
+      render();
+    };
+    list.appendChild(item);
+  });
+}
+
+/* Keyboard Shortcuts */
+document.addEventListener("keydown", e => {
+  const tag = (document.activeElement && document.activeElement.tagName) || "";
+  if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
+
+  if (e.key === "?") {
+    e.preventDefault();
+    $("shortcutsModal").classList.toggle("open");
+    return;
+  }
+
+  if (!$("player").classList.contains("open")) return;
+  const v = $("video");
+
+  if (e.code === "Space") {
+    e.preventDefault();
+    v.paused ? v.play() : v.pause();
+  } else if (e.code === "ArrowRight") {
+    e.preventDefault();
+    v.currentTime = Math.min(v.duration || Infinity, v.currentTime + 5);
+  } else if (e.code === "ArrowLeft") {
+    e.preventDefault();
+    v.currentTime = Math.max(0, v.currentTime - 5);
+  } else if (e.key === "l" || e.key === "L") {
+    e.preventDefault();
+    v.currentTime = Math.min(v.duration || Infinity, v.currentTime + 10);
+  } else if (e.key === "j" || e.key === "J") {
+    e.preventDefault();
+    v.currentTime = Math.max(0, v.currentTime - 10);
+  } else if (e.code === "ArrowUp") {
+    e.preventDefault();
+    v.volume = Math.min(1, v.volume + 0.1);
+  } else if (e.code === "ArrowDown") {
+    e.preventDefault();
+    v.volume = Math.max(0, v.volume - 0.1);
+  } else if (e.key === "m" || e.key === "M") {
+    v.muted = !v.muted;
+  } else if (e.key === "n" || e.key === "N") {
+    nextAfter(playingItem).then(n => { if (n) play(n); });
+  } else if (e.key === "c" || e.key === "C") {
+    $("playerMarkDone").click();
+  } else if (e.key === "f" || e.key === "F") {
+    $("fs").click();
+  } else if (e.key === "p" || e.key === "P") {
+    $("playerPip").click();
+  } else if (e.key === "." || e.key === ">") {
+    setSpeed(speedIdx + 1);
+  } else if (e.key === "," || e.key === "<") {
+    setSpeed(speedIdx - 1);
+  } else if (e.key === "Escape") {
+    closePlayer();
+  }
+});
+
+/* Rendering Views */
+function render() {
+  const items = all();
+  const totalDur = items.reduce((n, i) => n + (i.duration || 0), 0);
+  const doneDur = items.filter(i => i.done).reduce((n, i) => n + (i.duration || 0), 0);
+  const pct = totalDur ? Math.round((doneDur / totalDur) * 100) : 0;
+  const tPct = items.length ? todayPct(items): 0;
+
+  $("todayTag").textContent = tPct > 0 ? `+${fmtPct(tPct)} today` : "";
+  $("todayTag").style.display = tPct > 0 ? "inline-block" : "none";
+
+  const paceEl = $("paceTag");
+  if (paceEl) {
+    const p = estimatePace(items);
+    paceEl.innerHTML = !course ? "Select a course to view pace estimate." :
+      !p ? "" :
+      p.done ? "🎉 <b>Course Finished!</b> All lessons marked complete." :
+      p.noPace ? "Study today to calibrate your estimated finish date." :
+      `⚡ At ~<b>${fmt(p.perDaySec)}</b>/day (last 14 days avg), you'll finish in ~<b>${p.days} day${p.days === 1 ? "" : "s"}</b> — around <b>${fmtDate(p.finish)}</b>.`;
+  }
+
+  $("title").textContent = course ? course.courseName : "My Courses";
+  $("subtitle").textContent = course ? `${course.sections.length} sections · ${items.length} media lessons` : "Select a course folder to begin.";
+  $("pct").textContent = pct + "%";
+  $("completedText").textContent = fmt(doneDur);
+  $("remainingText").textContent = fmt(Math.max(0, totalDur - doneDur));
+  $("totalText").textContent = fmt(totalDur);
+  $("fill").style.width = pct + "%";
+  $("rescan").disabled = !handle;
+
+  // Continue Box
+  const next = items.find(i => !i.done);
+  $("continueBox").style.display = next ? "flex" : "none";
+  if (next) {
+    $("continueName").textContent = next.name + (next.position ? ` · resume at ${fmtTimestamp(next.position)}` : "");
+    $("continueComplete").onclick = () => {
+      next.done = true;
+      next.position = next.duration || 0;
+      next.doneDate = dayKey();
+      sync();
+      renderAll();
+    };
+    $("continuePlay").onclick = () => play(next);
+  }
+
+  // Section Filter Dropdown
+  const select = $("sectionFilter");
+  const wanted = select.value;
+  select.innerHTML = '<option value="">All sections</option>' + (course ? course.sections.map(s => `<option value="${esc(s.name)}">${esc(s.name)}</option>`).join("") : "");
+  select.value = course && course.sections.some(s => s.name === wanted) ? wanted : "";
+
+  // Counts for tabs
+  const countAll = items.length;
+  const countDone = items.filter(i => i.done).length;
+  const countInProg = items.filter(i => !i.done && i.position > 0).length;
+  const countUnw = countAll - countDone;
+
+  $("countAll").textContent = countAll;
+  $("countInProgress").textContent = countInProg;
+  $("countUnwatched").textContent = countUnw;
+  $("countCompleted").textContent = countDone;
+
+  // Render Lessons
+  $("sections").innerHTML = "";
+  if (!items.length) {
+    $("empty").style.display = "block";
+    return;
+  }
+  $("empty").style.display = "none";
+
+  const term = search.toLowerCase();
+  let count = 0;
+
+  for (const s of (course ? course.sections : [])) {
+    if (section && section !== s.name) continue;
+
+    let visible = s.items.filter(i => !term || i.name.toLowerCase().includes(term) || i.path.toLowerCase().includes(term));
+
+    if (lessonFilter === "in-progress") {
+      visible = visible.filter(i => !i.done && i.position > 0);
+    } else if (lessonFilter === "unwatched") {
+      visible = visible.filter(i => !i.done);
+    } else if (lessonFilter === "completed") {
+      visible = visible.filter(i => i.done);
+    }
+
+    if (!visible.length) continue;
+    count++;
+
+    const sd = visible.filter(i => i.done).reduce((n, i) => n + (i.duration || 0), 0);
+    const st = visible.reduce((n, i) => n + (i.duration || 0), 0);
+    const sp = st ? Math.round((sd / st) * 100) : 0;
+
+    const box = document.createElement("div");
+    const key = (course ? course.id : "") + "::" + s.name;
+    const isCollapsed = term ? false : collapsed[key] !== false;
+    box.className = "section" + (isCollapsed ? " collapsed" : "");
+
+    const head = document.createElement("div");
+    head.className = "section-head";
+    head.innerHTML = `
+      <div class="section-name"><span class="chev">▼</span>${esc(s.name)}</div>
+      <div class="section-meta">
+        <span>${visible.filter(i=>i.done).length}/${visible.length} done</span>
+        <span class="mini-bar"><i style="width:${sp}%"></i></span>
+        <span>${sp}%</span>
+      </div>
+    `;
+    head.onclick = () => { collapsed[key] = !isCollapsed; render(); };
+
+    const ls = document.createElement("div");
+    ls.className = "lessons";
+
+    if (!isCollapsed) {
+      for (const i of visible) {
+        const row = document.createElement("div");
+        row.className = "lesson" + (i.done ? " done" : "");
+
+        const check = document.createElement("div");
+        check.className = "check-btn";
+        check.onclick = e => {
+          e.stopPropagation();
+          i.done = !i.done;
+          if (i.done) {
+            i.position = i.duration || i.position;
+            i.doneDate = dayKey();
+          } else {
+            i.doneDate = null;
+          }
+          sync();
+          renderAll();
+        };
+
+        const info = document.createElement("div");
+        info.className = "lesson-info";
+        info.onclick = () => play(i);
+
+        const hasNotes = i.notes && i.notes.length > 0;
+        const noteBadge = hasNotes ? `<span class="note-badge">📝 ${i.notes.length}</span>` : "";
+
+        let progMicro = "";
+        if (!i.done && i.position > 0 && i.duration > 0) {
+          const pctWatched = Math.min(100, Math.round((i.position / i.duration) * 100));
+          progMicro = `<div class="lesson-progress-micro"><div class="lesson-progress-micro-fill" style="width:${pctWatched}%"></div></div>`;
+        }
+
+        info.innerHTML = `
+          <div class="lesson-title" title="${esc(i.path)}">${esc(i.name)} ${noteBadge}</div>
+          ${progMicro}
+        `;
+
+        const tm = document.createElement("div");
+        tm.className = "lesson-time";
+        tm.textContent = i.duration ? fmt(i.duration) : "…";
+
+        const op = document.createElement("button");
+        op.className = "sm";
+        op.textContent = "▶ Play";
+        op.onclick = () => play(i);
+
+        row.append(check, info, tm, op);
+        ls.appendChild(row);
       }
     }
-    box.append(head,ls);$("sections").appendChild(box);
+    box.append(head, ls);
+    $("sections").appendChild(box);
   }
-  if(!count)$("sections").innerHTML='<div class="empty">No lessons match your search.</div>';
+  if (!count) $("sections").innerHTML = '<div class="empty">No lessons match your current filter.</div>';
 }
 
-function renderCourses(){
-  const list=$("courseList");list.innerHTML="";
-  for(const c of db.courses){
-    const a=(c.sections||[]).flatMap(s=>s.items||[]),d=a.reduce((n,i)=>n+(i.duration||0),0),done=a.filter(i=>i.done).reduce((n,i)=>n+(i.duration||0),0),p=d?Math.round(done/d*100):0,tp=todayPct(a);
-    const row=document.createElement("div");row.className="course-row"+(c.id===db.active?" current":"");
-    const info=document.createElement("div");info.innerHTML=`<div class="course-name">${esc(c.courseName)}</div><div class="course-meta">${fmt(done)} / ${fmt(d)} · ${p}%${tp>0?` · +${fmtPct(tp)} today`:""}</div>`;
-    const actions=document.createElement("div");actions.className="course-actions";
-    const open=document.createElement("button");open.textContent=c.id===db.active?"Current":"Open";open.onclick=async()=>{if(c.id===db.active){return} await pickExisting(c)};
-    const rem=document.createElement("button");rem.textContent="Remove";rem.onclick=()=>{if(confirm(`Remove "${c.courseName}" from the tracker? Your files will not be deleted.`)){idbDel(c.id);const idx=db.courses.findIndex(x=>x.id===c.id),removed=db.courses[idx];db.courses=db.courses.filter(x=>x.id!==c.id);if(db.active===c.id){db.active=db.courses[0]?.id||null;course=current();handle=null}save();renderAll();toast(`removed "${c.courseName}"`,()=>{db.courses.splice(idx,0,removed);save();renderAll();toast("course restored — reopen its folder to keep playing")})}};
-    actions.append(open,rem);row.append(info,actions);list.appendChild(row);
-  }
-  if(!db.courses.length)list.innerHTML='<div class="empty" style="padding:20px">No courses imported yet.</div>';
-}
+function renderCourses() {
+  const list = $("courseList");
+  list.innerHTML = "";
 
-async function pickExisting(c){
-  try{
-    const h=await idbGet(c.id);
-    if(h){
-      let perm=await h.queryPermission({mode:"read"});
-      if(perm!=="granted")perm=await h.requestPermission({mode:"read"});
-      if(perm==="granted"){
-        db.active=c.id;course=c;handle=h;save();
-        await scan();toast("course reopened");renderAll();
-        return;
+  for (const c of db.courses) {
+    const a = (c.sections || []).flatMap(s => s.items || []);
+    const d = a.reduce((n, i) => n + (i.duration || 0), 0);
+    const done = a.filter(i => i.done).reduce((n, i) => n + (i.duration || 0), 0);
+    const p = d ? Math.round((done / d) * 100) : 0;
+    const tp = todayPct(a);
+
+    const row = document.createElement("div");
+    row.className = "course-row" + (c.id === db.active ? " current" : "");
+
+    const isCurrent = c.id === db.active;
+    const isReady = isCurrent && handleStatus === "connected";
+
+    const info = document.createElement("div");
+    info.innerHTML = `
+      <div class="course-name">
+        ${esc(c.courseName)}
+        ${isCurrent ? '<span class="status-pill connected" style="font-size:10px;padding:1px 6px"><span class="status-dot"></span> Active</span>' : ''}
+      </div>
+      <div class="course-meta">
+        ${fmt(done)} / ${fmt(d)} · ${p}% completed · ${a.length} lessons${tp > 0 ? ` · +${fmtPct(tp)} today` : ''}
+      </div>
+    `;
+
+    const actions = document.createElement("div");
+    actions.className = "course-actions";
+
+    const openBtn = document.createElement("button");
+    openBtn.className = "sm" + (isCurrent ? " primary" : "");
+    openBtn.textContent = isCurrent ? (isReady ? "✓ Active" : "⚡ Reconnect") : "Switch To";
+    openBtn.onclick = async () => {
+      db.active = c.id;
+      course = c;
+      save();
+      await checkHandleStatus(c);
+      if (handleStatus === "needs-permission") {
+        await reconnectCurrentFolder();
+      } else if (handleStatus === "disconnected") {
+        await pickFolder();
+      } else {
+        await scan(false);
       }
-    }
-  }catch(e){}
-  toast("folder access needs to be granted again");
-  await pickFolder();
-}
+      renderAll();
+    };
 
-function renderDashboard(){
-  $("mCourses").textContent=db.courses.length;
-  const allItems=db.courses.flatMap(c=>(c.sections||[]).flatMap(s=>s.items||[]));
-  $("mToday").textContent=fmtPct(todayPct(allItems));
-  const now=new Date(),keys=[];
-  if(rangeDays){
-    for(let i=rangeDays-1;i>=0;i--){const d=new Date(now);d.setDate(now.getDate()-i);keys.push(dayKey(d))}
-  }else{
-    const ks=[...activityAllDayKeys()].sort();
-    if(ks.length){const a=new Date(ks[0]),b=new Date(ks[ks.length-1]);for(let d=new Date(a);d<=b;d.setDate(d.getDate()+1))keys.push(dayKey(d))}
-    else keys.push(dayKey());
+    const relinkBtn = document.createElement("button");
+    relinkBtn.className = "sm ghost";
+    relinkBtn.textContent = "📁 Relink";
+    relinkBtn.title = "Relink folder if moved";
+    relinkBtn.onclick = async () => {
+      db.active = c.id;
+      course = c;
+      await pickFolder();
+    };
+
+    const rem = document.createElement("button");
+    rem.className = "sm danger";
+    rem.textContent = "Remove";
+    rem.onclick = () => {
+      if (confirm(`Remove "${c.courseName}" from the tracker? Your video files will NOT be deleted.`)) {
+        idbDelHandle(c.id);
+        const idx = db.courses.findIndex(x => x.id === c.id);
+        const removed = db.courses[idx];
+        db.courses = db.courses.filter(x => x.id !== c.id);
+        if (db.active === c.id) {
+          db.active = db.courses[0]?.id || null;
+          course = current();
+          handle = null;
+        }
+        save();
+        renderAll();
+        toast(`Removed "${c.courseName}"`, () => {
+          db.courses.splice(idx, 0, removed);
+          save();
+          renderAll();
+          toast("Course restored");
+        });
+      }
+    };
+
+    actions.append(openBtn, relinkBtn, rem);
+    row.append(info, actions);
+    list.appendChild(row);
   }
-  const learned=keys.reduce((n,k)=>n+activityDayAll(k),0);
-  const completed=allItems.filter(i=>i.done).reduce((n,i)=>n+(i.duration||0),0);
-  $("mLearned").textContent=fmt(learned);$("mCompleted").textContent=fmt(completed);
-  let streak=0;for(let i=0;;i++){const d=new Date(now);d.setDate(now.getDate()-i);if(activityDayAll(dayKey(d))>0)streak++;else break}$("mStreak").textContent=streak;
-  const cv=$("chart"),w=cv.clientWidth||700,h=110,r=devicePixelRatio||1;cv.width=w*r;cv.height=h*r;const x=cv.getContext("2d");x.setTransform(r,0,0,r,0,0);x.clearRect(0,0,w,h);
-  const vals=keys.map(k=>activityDayAll(k)),max=Math.max(1,...vals),pad=18,iw=w-pad*2,ih=h-28;
-  x.strokeStyle="#2a303c";x.beginPath();x.moveTo(pad,ih);x.lineTo(w-pad,ih);x.stroke();
-  x.strokeStyle="#4fd1c5";x.lineWidth=2;x.beginPath();vals.forEach((v,i)=>{const px=pad+(vals.length===1?iw/2:i*iw/(vals.length-1)),py=ih-(v/max)*(ih-8);i?x.lineTo(px,py):x.moveTo(px,py)});x.stroke();
-  x.fillStyle="#4fd1c5";vals.forEach((v,i)=>{const px=pad+(vals.length===1?iw/2:i*iw/(vals.length-1)),py=ih-(v/max)*(ih-8);x.beginPath();x.arc(px,py,2.5,0,Math.PI*2);x.fill()});
-  const act=$("activity");act.innerHTML="";keys.slice().reverse().filter(k=>activityDayAll(k)>0).slice(0,8).forEach(k=>{const row=document.createElement("div");row.className="activity-row";row.innerHTML=`<span>${k}</span><span>${fmt(activityDayAll(k))}</span>`;act.appendChild(row)});
-  if(!act.children.length)act.innerHTML='<div class="activity-row"><span>No learning activity yet</span><span>0m</span></div>';
+  if (!db.courses.length) {
+    list.innerHTML = '<div class="empty" style="padding:20px">No courses imported yet. Click "Add Course" to get started!</div>';
+  }
 }
 
-function renderDaySelect(){
-  const sel=$("dayCourse"),cur=sel.value;
-  sel.innerHTML='<option value="__all">All courses (combined)</option>'+db.courses.map(c=>`<option value="${c.id}">${esc(c.courseName)}</option>`).join("");
-  sel.value=(cur&&(cur==="__all"||db.courses.some(c=>c.id===cur)))?cur:(course?course.id:"__all");
-}
-function renderDayResult(){
-  const cid=$("dayCourse").value,k=$("dayDate").value;
-  if(!k){$("dayResult").innerHTML='<div class="dr-empty">Pick a date to see progress.</div>';return}
-  let items,label;
-  if(cid==="__all"){items=db.courses.flatMap(c=>(c.sections||[]).flatMap(s=>s.items||[]));label="all courses"}
-  else{const c=db.courses.find(x=>x.id===cid);items=c?(c.sections||[]).flatMap(s=>s.items||[]):[];label=c?c.courseName:"this course"}
-  const pct=pctOnDate(items,k),done=items.filter(i=>i.done&&i.doneDate===k),durSum=done.reduce((n,i)=>n+(i.duration||0),0);
-  $("dayResult").innerHTML=`<div class="dr-pct">${fmtPct(pct)}</div><div class="dr-meta">of ${esc(label)} completed on ${k}${done.length?` · ${fmt(durSum)} across ${done.length} lesson${done.length===1?"":"s"}`:""}</div>`+(done.length?`<div class="dr-list">${done.map(i=>`<span>✓ ${esc(i.name)}</span>`).join("")}</div>`:'<div class="dr-empty">No lessons marked complete on this day.</div>');
-}
-$("dayCourse").onchange=renderDayResult;
-$("dayDate").onchange=renderDayResult;
+function renderDashboard() {
+  $("mCourses").textContent = db.courses.length;
+  const allSections = db.courses.reduce((n, c) => n + (c.sections || []).length, 0);
+  $("mCoursesSub").textContent = `${allSections} sections across library`;
 
-function goalFor(id){return (db.goals&&db.goals[id])||{period:"weekly",hours:0}}
-function setGoal(id,period,hours){db.goals=db.goals||{};db.goals[id]={period,hours};save();renderGoals()}
-function hoursInPeriod(id,period){
-  const days=period==="daily"?1:7,now=new Date();let sec=0;
-  for(let i=0;i<days;i++){const d=new Date(now);d.setDate(now.getDate()-i);const k=dayKey(d);sec+=id==="__overall"?activityDayAll(k):activityDay(id,k)}
-  return sec/3600;
+  const allItems = db.courses.flatMap(c => (c.sections || []).flatMap(s => s.items || []));
+  const tPctVal = todayPct(allItems);
+  $("mToday").textContent = fmtPct(tPctVal);
+  $("mTodayDur").textContent = `+${fmt(activityDayAll(dayKey()))} today`;
+
+  const now = new Date();
+  const keys = [];
+  if (rangeDays) {
+    for (let i = rangeDays - 1; i >= 0; i--) {
+      const d = new Date(now);
+      d.setDate(now.getDate() - i);
+      keys.push(dayKey(d));
+    }
+  } else {
+    const ks = [...activityAllDayKeys()].sort();
+    if (ks.length) {
+      const a = new Date(ks[0]);
+      const b = new Date(ks[ks.length - 1]);
+      for (let d = new Date(a); d <= b; d.setDate(d.getDate() + 1)) keys.push(dayKey(d));
+    } else {
+      keys.push(dayKey());
+    }
+  }
+
+  const learned = keys.reduce((n, k) => n + activityDayAll(k), 0);
+  const completed = allItems.filter(i => i.done).reduce((n, i) => n + (i.duration || 0), 0);
+  const doneCount = allItems.filter(i => i.done).length;
+
+  $("mLearned").textContent = fmt(learned);
+  $("mCompleted").textContent = fmt(completed);
+  $("mCompletedCount").textContent = `${doneCount} lessons completed`;
+
+  // Streak Calculation
+  let streak = 0;
+  for (let i = 0; ; i++) {
+    const d = new Date(now);
+    d.setDate(now.getDate() - i);
+    if (activityDayAll(dayKey(d)) > 0) streak++;
+    else break;
+  }
+  $("mStreak").textContent = `${streak} 🔥`;
+
+  // Visual View Render
+  if (currentVisualTab === "chart") {
+    $("chartBox").style.display = "block";
+    $("heatmapContainer").style.display = "none";
+    renderTrendChart(keys);
+  } else {
+    $("chartBox").style.display = "none";
+    $("heatmapContainer").style.display = "flex";
+    renderHeatmap();
+  }
 }
-function renderGoals(){
-  const chev=$("goalsChev");if(chev)chev.style.transform=goalsCollapsed?"rotate(-90deg)":"";
-  const wrap=$("goalsList");if(!wrap)return;wrap.style.display=goalsCollapsed?"none":"flex";wrap.innerHTML="";
-  const entries=[{id:"__overall",name:"Overall (all courses)"}].concat(db.courses.map(c=>({id:c.id,name:c.courseName})));
-  for(const e of entries){
-    const g=goalFor(e.id),have=hoursInPeriod(e.id,g.period),pct=g.hours>0?Math.min(100,Math.round(have/g.hours*100)):0;
-    const hourOpts='<option value="0"'+(g.hours===0?' selected':'')+'>No goal</option>'+Array.from({length:20},(_,i)=>i+1).map(h=>'<option value="'+h+'"'+(g.hours===h?' selected':'')+'>'+h+'h</option>').join("");
-    const barHtml=g.hours>0?('<div class="goal-bar"><div class="goal-fill" style="width:'+pct+'%"></div></div><div class="goal-text">'+have.toFixed(1)+'h / '+g.hours+'h · '+pct+'%'+(g.period==="daily"?" today":" this week")+'</div>'):'<div class="goal-empty">No goal set</div>';
-    const row=document.createElement("div");row.className="goal-row";
-    row.innerHTML='<div class="goal-name">'+esc(e.name)+'</div><div class="goal-controls"><select class="goal-period"><option value="daily"'+(g.period==="daily"?' selected':'')+'>Daily</option><option value="weekly"'+(g.period==="weekly"?' selected':'')+'>Weekly</option></select><select class="goal-hours">'+hourOpts+'</select></div><div class="goal-bar-wrap">'+barHtml+'</div>';
-    const pSel=row.querySelector(".goal-period"),hSel=row.querySelector(".goal-hours");
-    const apply=()=>setGoal(e.id,pSel.value,Number(hSel.value));
-    pSel.onchange=apply;hSel.onchange=apply;
+
+function renderTrendChart(keys) {
+  const cv = $("chart");
+  const w = cv.clientWidth || 700;
+  const h = 120;
+  const r = window.devicePixelRatio || 1;
+  cv.width = w * r;
+  cv.height = h * r;
+
+  const ctx = cv.getContext("2d");
+  ctx.setTransform(r, 0, 0, r, 0, 0);
+  ctx.clearRect(0, 0, w, h);
+
+  const vals = keys.map(k => activityDayAll(k));
+  const max = Math.max(60, ...vals);
+  const pad = 24;
+  const iw = w - pad * 2;
+  const ih = h - 24;
+
+  // Grid lines
+  ctx.strokeStyle = "rgba(255, 255, 255, 0.05)";
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(pad, ih); ctx.lineTo(w - pad, ih);
+  ctx.moveTo(pad, ih / 2); ctx.lineTo(w - pad, ih / 2);
+  ctx.stroke();
+
+  // Gradient fill under curve
+  const grad = ctx.createLinearGradient(0, 0, 0, ih);
+  grad.addColorStop(0, "rgba(16, 185, 129, 0.35)");
+  grad.addColorStop(1, "rgba(16, 185, 129, 0.0)");
+
+  ctx.beginPath();
+  vals.forEach((v, i) => {
+    const px = pad + (vals.length === 1 ? iw / 2 : (i * iw) / (vals.length - 1));
+    const py = ih - (v / max) * (ih - 12);
+    if (i === 0) ctx.moveTo(px, ih);
+    ctx.lineTo(px, py);
+  });
+  ctx.lineTo(w - pad, ih);
+  ctx.closePath();
+  ctx.fillStyle = grad;
+  ctx.fill();
+
+  // Curve line
+  ctx.strokeStyle = "#10b981";
+  ctx.lineWidth = 2.5;
+  ctx.beginPath();
+  vals.forEach((v, i) => {
+    const px = pad + (vals.length === 1 ? iw / 2 : (i * iw) / (vals.length - 1));
+    const py = ih - (v / max) * (ih - 12);
+    if (i === 0) ctx.moveTo(px, py);
+    else ctx.lineTo(px, py);
+  });
+  ctx.stroke();
+
+  // Points
+  ctx.fillStyle = "#34d399";
+  vals.forEach((v, i) => {
+    const px = pad + (vals.length === 1 ? iw / 2 : (i * iw) / (vals.length - 1));
+    const py = ih - (v / max) * (ih - 12);
+    ctx.beginPath();
+    ctx.arc(px, py, 3, 0, Math.PI * 2);
+    ctx.fill();
+  });
+}
+
+function renderHeatmap() {
+  const grid = $("heatmapGrid");
+  grid.innerHTML = "";
+  const now = new Date();
+  const daysToShow = 70; // 10 weeks
+  const startDate = new Date(now);
+  startDate.setDate(now.getDate() - daysToShow);
+
+  for (let d = new Date(startDate); d <= now; d.setDate(d.getDate() + 1)) {
+    const k = dayKey(d);
+    const sec = activityDayAll(k);
+    const cell = document.createElement("div");
+    cell.className = "heatmap-cell";
+    if (sec > 0) {
+      if (sec < 900) cell.classList.add("l1");
+      else if (sec < 2400) cell.classList.add("l2");
+      else if (sec < 5400) cell.classList.add("l3");
+      else cell.classList.add("l4");
+    }
+    cell.title = `${k}: ${fmt(sec)} watch time`;
+    cell.onclick = () => {
+      $("dayDate").value = k;
+      renderDayResult();
+      $("dayResult").scrollIntoView({ behavior: "smooth" });
+    };
+    grid.appendChild(cell);
+  }
+}
+
+function renderDaySelect() {
+  const sel = $("dayCourse");
+  const cur = sel.value;
+  sel.innerHTML = '<option value="__all">All courses (combined)</option>' + db.courses.map(c => `<option value="${c.id}">${esc(c.courseName)}</option>`).join("");
+  sel.value = (cur && (cur === "__all" || db.courses.some(c => c.id === cur))) ? cur : (course ? course.id : "__all");
+}
+
+function renderDayResult() {
+  const cid = $("dayCourse").value;
+  const k = $("dayDate").value;
+  if (!k) {
+    $("dayResult").innerHTML = '<div class="empty" style="padding:14px">Pick a date to inspect.</div>';
+    return;
+  }
+  let items, label;
+  if (cid === "__all") {
+    items = db.courses.flatMap(c => (c.sections || []).flatMap(s => s.items || []));
+    label = "all courses combined";
+  } else {
+    const c = db.courses.find(x => x.id === cid);
+    items = c ? (c.sections || []).flatMap(s => s.items || []) : [];
+    label = c ? c.courseName : "this course";
+  }
+  const pct = pctOnDate(items, k);
+  const done = items.filter(i => i.done && i.doneDate === k);
+  const durSum = done.reduce((n, i) => n + (i.duration || 0), 0);
+  const watchedSec = cid === "__all" ? activityDayAll(k) : activityDay(cid, k);
+
+  $("dayResult").innerHTML = `
+    <div style="background:rgba(9,13,22,0.7);border:1px solid var(--border);border-radius:var(--radius-md);padding:14px">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px">
+        <div style="font:700 24px var(--mono);color:#34d399">${fmt(watchedSec)} studied</div>
+        <div style="font:12px var(--mono);color:var(--text-muted)">${fmtPct(pct)} of ${esc(label)} completed on ${k}</div>
+      </div>
+      <div style="font:11.5px var(--sans);color:var(--text-muted);margin-top:4px">
+        ${done.length ? `${done.length} lesson${done.length === 1 ? '' : 's'} marked complete (${fmt(durSum)})` : 'No lessons marked complete on this day'}
+      </div>
+      ${done.length ? `<div style="margin-top:10px;display:flex;flex-direction:column;gap:4px;max-height:160px;overflow-y:auto;font:11.5px var(--mono);color:var(--text)">${done.map(i => `<div>✓ ${esc(i.name)} (${fmt(i.duration)})</div>`).join("")}</div>` : ''}
+    </div>
+  `;
+}
+$("dayCourse").onchange = renderDayResult;
+$("dayDate").onchange = renderDayResult;
+
+/* Goals System */
+function goalFor(id) {
+  return (db.goals && db.goals[id]) || { period: "weekly", hours: 0 };
+}
+function setGoal(id, period, hours) {
+  db.goals = db.goals || {};
+  db.goals[id] = { period, hours };
+  save();
+  renderGoals();
+}
+function hoursInPeriod(id, period) {
+  const days = period === "daily" ? 1 : 7;
+  const now = new Date();
+  let sec = 0;
+  for (let i = 0; i < days; i++) {
+    const d = new Date(now);
+    d.setDate(now.getDate() - i);
+    const k = dayKey(d);
+    sec += id === "__overall" ? activityDayAll(k) : activityDay(id, k);
+  }
+  return sec / 3600;
+}
+
+function renderGoals() {
+  const chev = $("goalsChev");
+  if (chev) chev.style.transform = goalsCollapsed ? "rotate(-90deg)" : "";
+  const wrap = $("goalsList");
+  if (!wrap) return;
+  wrap.style.display = goalsCollapsed ? "none" : "flex";
+  wrap.innerHTML = "";
+
+  const entries = [{ id: "__overall", name: "🌟 Overall Target (All Courses)" }].concat(db.courses.map(c => ({ id: c.id, name: c.courseName })));
+
+  for (const e of entries) {
+    const g = goalFor(e.id);
+    const have = hoursInPeriod(e.id, g.period);
+    const pct = g.hours > 0 ? Math.min(100, Math.round((have / g.hours) * 100)) : 0;
+    const hourOpts = '<option value="0"' + (g.hours === 0 ? ' selected' : '') + '>No goal</option>' +
+      Array.from({ length: 25 }, (_, i) => i + 1).map(h => '<option value="' + h + '"' + (g.hours === h ? ' selected' : '') + '>' + h + 'h</option>').join("");
+
+    const barHtml = g.hours > 0 ?
+      `<div class="goal-bar"><div class="goal-fill" style="width:${pct}%"></div></div>
+       <div class="goal-text">
+         <span>${have.toFixed(1)}h / ${g.hours}h (${pct}% accomplished)</span>
+         <span>${g.period === "daily" ? "Today" : "This Week"}</span>
+       </div>` :
+      '<div style="font-size:11.5px;color:var(--text-faint)">No target active. Select hours to motivate yourself.</div>';
+
+    const row = document.createElement("div");
+    row.className = "goal-row";
+    row.innerHTML = `
+      <div class="goal-name">${esc(e.name)}</div>
+      <div class="goal-controls">
+        <select class="goal-period">
+          <option value="daily"${g.period === "daily" ? ' selected' : ''}>Daily</option>
+          <option value="weekly"${g.period === "weekly" ? ' selected' : ''}>Weekly</option>
+        </select>
+        <select class="goal-hours">${hourOpts}</select>
+      </div>
+      <div class="goal-bar-wrap">${barHtml}</div>
+    `;
+
+    const pSel = row.querySelector(".goal-period");
+    const hSel = row.querySelector(".goal-hours");
+    const apply = () => setGoal(e.id, pSel.value, Number(hSel.value));
+    pSel.onchange = apply;
+    hSel.onchange = apply;
     wrap.appendChild(row);
   }
 }
-function fmtDate(d){return d.toLocaleDateString(undefined,{month:"short",day:"numeric"})}
-function estimatePace(items){
-  if(!course)return null;
-  const totalDur=items.reduce((n,i)=>n+(i.duration||0),0),doneDur=items.filter(i=>i.done).reduce((n,i)=>n+(i.duration||0),0),remaining=totalDur-doneDur;
-  if(remaining<=0)return{done:true};
-  const now=new Date();let sec=0;
-  for(let i=0;i<14;i++){const d=new Date(now);d.setDate(now.getDate()-i);sec+=activityDay(course.id,dayKey(d))}
-  const perDaySec=sec/14;
-  if(perDaySec<=0)return{done:false,noPace:true};
-  const days=Math.ceil(remaining/perDaySec),finish=new Date(now);finish.setDate(now.getDate()+days);
-  return{done:false,noPace:false,perDaySec,days,finish};
+
+function fmtDate(d) {
+  return d.toLocaleDateString(undefined, { month: "short", day: "numeric" });
 }
 
-function renderAll(){render();renderCourses();renderDashboard();renderDaySelect();renderDayResult();renderGoals();renderBackupBanner()}
+function estimatePace(items) {
+  if (!course) return null;
+  const totalDur = items.reduce((n, i) => n + (i.duration || 0), 0);
+  const doneDur = items.filter(i => i.done).reduce((n, i) => n + (i.duration || 0), 0);
+  const remaining = totalDur - doneDur;
+  if (remaining <= 0) return { done: true };
 
-$("choose").onclick=pickFolder;$("addCourse").onclick=pickFolder;
-$("rescan").onclick=async()=>{if(handle){await scan();toast("rescanned")}else await pickFolder()};
-$("search").oninput=e=>{search=e.target.value;render()};
-$("sectionFilter").onchange=e=>{section=e.target.value;render()};
-function setAllCollapsed(val){for(const s of (course?course.sections:[]))collapsed[(course?course.id:"")+"::"+s.name]=val;render()}
-$("collapseAll").onclick=()=>setAllCollapsed(true);
-$("expandAll").onclick=()=>setAllCollapsed(false);
-$("goalsHead").onclick=()=>{goalsCollapsed=!goalsCollapsed;renderGoals()};
-document.querySelectorAll(".range button").forEach(b=>b.onclick=()=>{document.querySelectorAll(".range button").forEach(x=>x.classList.remove("active"));b.classList.add("active");rangeDays=Number(b.dataset.days);renderDashboard()});
-$("clear").onclick=()=>{if(course&&confirm("Clear completion and playback progress for this course?")){const snap=JSON.parse(JSON.stringify(course.sections)),lastSnap=course.last;all().forEach(i=>{i.done=false;i.position=0});course.last=null;sync();renderAll();toast("progress cleared",()=>{course.sections=snap;course.last=lastSnap;sync();renderAll()})}};
-$("export").onclick=()=>{const blob=new Blob([JSON.stringify(db,null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="course-tracker-backup.json";a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);db.lastBackupAt=Date.now();save();renderBackupBanner()};
-function shouldRemindBackup(){
-  if(!db.courses.length)return false;
-  const now=Date.now();
-  if(db.backupSnoozedUntil&&now<db.backupSnoozedUntil)return false;
-  return (now-(db.lastBackupAt||0))>7*24*3600*1000;
-}
-function renderBackupBanner(){
-  const el=$("backupBanner");if(!el)return;
-  if(shouldRemindBackup()){
-    el.style.display="flex";
-    const days=db.lastBackupAt?Math.floor((Date.now()-db.lastBackupAt)/86400000):null;
-    $("bbText").textContent=days===null?"You haven't backed up your progress yet — it only lives in this browser.":`It's been ${days} day${days===1?"":"s"} since your last backup.`;
-  }else{el.style.display="none"}
-}
-$("bbExport").onclick=()=>$("export").click();
-$("bbSnooze").onclick=()=>{db.backupSnoozedUntil=Date.now()+7*24*3600*1000;save();renderBackupBanner()};
-$("import").onclick=()=>$("backup").click();
-$("backup").onchange=async e=>{const f=e.target.files[0];if(!f)return;try{const d=JSON.parse(await f.text());if(!d||!Array.isArray(d.courses))throw Error();db=d;migrateActivity();save();course=current();handle=null;renderAll();toast("backup restored")}catch(x){toast("invalid backup")}e.target.value=""};
-window.addEventListener("resize",renderDashboard);
+  const now = new Date();
+  let sec = 0;
+  for (let i = 0; i < 14; i++) {
+    const d = new Date(now);
+    d.setDate(now.getDate() - i);
+    sec += activityDay(course.id, dayKey(d));
+  }
+  const perDaySec = sec / 14;
+  if (perDaySec <= 0) return { done: false, noPace: true };
 
-load();
-course=current();
-$("dayDate").value=dayKey();
-renderAll();
-(async()=>{
-  if(course){
-    try{
-      const h=await idbGet(course.id);
-      if(h){
-        const p=await h.queryPermission({mode:"read"});
-        if(p==="granted"){handle=h;await scan();renderAll()}
+  const days = Math.ceil(remaining / perDaySec);
+  const finish = new Date(now);
+  finish.setDate(now.getDate() + days);
+  return { done: false, noPace: false, perDaySec, days, finish };
+}
+
+function renderAll() {
+  render();
+  renderCourses();
+  renderDashboard();
+  renderDaySelect();
+  renderDayResult();
+  renderGoals();
+  renderBackupBanner();
+  renderConnectionStatus();
+}
+
+/* Event Listeners */
+$("choose").onclick = pickFolder;
+$("reconnectBtn").onclick = reconnectCurrentFolder;
+$("btnBannerReconnect").onclick = reconnectCurrentFolder;
+$("connStatus").onclick = () => {
+  if (handleStatus === "needs-permission") reconnectCurrentFolder();
+  else pickFolder();
+};
+
+$("addCourse").onclick = pickFolder;
+$("addCourse2").onclick = pickFolder;
+$("rescan").onclick = async () => {
+  if (handle) {
+    await scan(true);
+    toast("Rescanned media files!");
+  } else {
+    await pickFolder();
+  }
+};
+
+$("search").oninput = e => {
+  search = e.target.value;
+  render();
+};
+
+$("sectionFilter").onchange = e => {
+  section = e.target.value;
+  render();
+};
+
+document.querySelectorAll("#lessonFilterTabs button").forEach(b => {
+  b.onclick = () => {
+    document.querySelectorAll("#lessonFilterTabs button").forEach(x => x.classList.remove("active"));
+    b.classList.add("active");
+    lessonFilter = b.dataset.filter;
+    render();
+  };
+});
+
+function setAllCollapsed(val) {
+  for (const s of (course ? course.sections : [])) {
+    collapsed[(course ? course.id : "") + "::" + s.name] = val;
+  }
+  render();
+}
+$("collapseAll").onclick = () => setAllCollapsed(true);
+$("expandAll").onclick = () => setAllCollapsed(false);
+
+$("goalsHead").onclick = () => {
+  goalsCollapsed = !goalsCollapsed;
+  renderGoals();
+};
+
+document.querySelectorAll("#rangeTabs button").forEach(b => {
+  b.onclick = () => {
+    document.querySelectorAll("#rangeTabs button").forEach(x => x.classList.remove("active"));
+    b.classList.add("active");
+    rangeDays = Number(b.dataset.days);
+    renderDashboard();
+  };
+});
+
+$("tabChart").onclick = () => {
+  currentVisualTab = "chart";
+  $("tabChart").classList.add("active");
+  $("tabHeatmap").classList.remove("active");
+  renderDashboard();
+};
+$("tabHeatmap").onclick = () => {
+  currentVisualTab = "heatmap";
+  $("tabHeatmap").classList.add("active");
+  $("tabChart").classList.remove("active");
+  renderDashboard();
+};
+
+$("clear").onclick = () => {
+  if (course && confirm("Clear completion and playback progress for this course? Your actual video files are untouched.")) {
+    const snap = JSON.parse(JSON.stringify(course.sections));
+    const lastSnap = course.last;
+    all().forEach(i => { i.done = false; i.position = 0; i.doneDate = null; });
+    course.last = null;
+    sync();
+    renderAll();
+    toast("Course progress cleared", () => {
+      course.sections = snap;
+      course.last = lastSnap;
+      sync();
+      renderAll();
+    });
+  }
+};
+
+/* Backups, Export & Snapshots */
+function triggerDownloadBackup() {
+  const blob = new Blob([JSON.stringify(db, null, 2)], { type: "application/json" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = `course-tracker-backup-${dayKey()}.json`;
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  db.lastBackupAt = Date.now();
+  save();
+  renderBackupBanner();
+  toast("Backup downloaded!");
+}
+
+$("btnExport").onclick = triggerDownloadBackup;
+$("btnExportModal").onclick = triggerDownloadBackup;
+$("bbExport").onclick = triggerDownloadBackup;
+
+$("btnCopyJson").onclick = async () => {
+  try {
+    await navigator.clipboard.writeText(JSON.stringify(db, null, 2));
+    toast("JSON copied to clipboard!");
+  } catch(e) {
+    toast("Could not copy to clipboard");
+  }
+};
+
+$("btnImport").onclick = () => $("backupFileInput").click();
+$("btnImportModal").onclick = () => $("backupFileInput").click();
+
+$("backupFileInput").onchange = async e => {
+  const f = e.target.files[0];
+  if (!f) return;
+  try {
+    const d = JSON.parse(await f.text());
+    if (!d || !Array.isArray(d.courses)) throw Error();
+    db = d;
+    migrateActivity();
+    save();
+    course = current();
+    handle = null;
+    await checkHandleStatus(course);
+    renderAll();
+    toast("Backup restored successfully!");
+  } catch(x) {
+    toast("Invalid backup file format");
+  }
+  e.target.value = "";
+};
+
+/* Drag and Drop JSON Backup Support */
+window.addEventListener("dragover", e => e.preventDefault());
+window.addEventListener("drop", async e => {
+  e.preventDefault();
+  const f = e.dataTransfer.files[0];
+  if (f && f.name.endsWith(".json")) {
+    try {
+      const d = JSON.parse(await f.text());
+      if (d && Array.isArray(d.courses)) {
+        if (confirm(`Restore backup "${f.name}" with ${d.courses.length} courses?`)) {
+          db = d;
+          migrateActivity();
+          save();
+          course = current();
+          handle = null;
+          await checkHandleStatus(course);
+          renderAll();
+          toast("Backup restored!");
+        }
       }
-    }catch(e){}
+    } catch(err){}
+  }
+});
+
+function shouldRemindBackup() {
+  if (!db.courses.length) return false;
+  const now = Date.now();
+  if (db.backupSnoozedUntil && now < db.backupSnoozedUntil) return false;
+  return (now - (db.lastBackupAt || 0)) > 7 * 24 * 3600 * 1000;
+}
+
+function renderBackupBanner() {
+  const el = $("backupBanner");
+  if (!el) return;
+  if (shouldRemindBackup()) {
+    el.style.display = "flex";
+    const days = db.lastBackupAt ? Math.floor((Date.now() - db.lastBackupAt) / 86400000) : null;
+    $("bbText").textContent = days === null ?
+      "You haven't backed up your course progress yet — it only exists in this browser." :
+      `It's been ${days} days since your last backup. Keep your study streaks safe!`;
+  } else {
+    el.style.display = "none";
+  }
+}
+
+$("bbSnooze").onclick = () => {
+  db.backupSnoozedUntil = Date.now() + 7 * 24 * 3600 * 1000;
+  save();
+  renderBackupBanner();
+};
+
+/* Snapshots Modal */
+$("btnSnapshots").onclick = async () => {
+  const modal = $("snapshotsModal");
+  modal.classList.add("open");
+  const list = $("snapshotsList");
+  list.innerHTML = "<div>Loading snapshots…</div>";
+  const snaps = await idbGetSnapshots();
+  list.innerHTML = "";
+  if (!snaps.length) {
+    list.innerHTML = '<div style="font-size:12px;color:var(--text-faint)">No snapshots recorded yet. They are saved automatically on progress updates.</div>';
+    return;
+  }
+  snaps.reverse().forEach(s => {
+    const row = document.createElement("div");
+    row.style.cssText = "display:flex;justify-content:space-between;align-items:center;background:var(--surface-hover);padding:8px 10px;border-radius:6px;font-size:12px";
+    const dStr = new Date(s.date).toLocaleString();
+    row.innerHTML = `
+      <div>
+        <strong>${dStr}</strong>
+        <div style="font-size:11px;color:var(--text-muted)">${s.courseCount} courses (${s.courses.slice(0,2).join(", ")}${s.courses.length>2?'...':''})</div>
+      </div>
+      <button class="sm">Restore</button>
+    `;
+    row.querySelector("button").onclick = () => {
+      if (confirm(`Restore snapshot from ${dStr}? Current progress will be replaced.`)) {
+        try {
+          db = JSON.parse(s.data);
+          migrateActivity();
+          save();
+          course = current();
+          handle = null;
+          checkHandleStatus(course);
+          renderAll();
+          modal.classList.remove("open");
+          toast("Snapshot restored!");
+        } catch(e) { toast("Error restoring snapshot"); }
+      }
+    };
+    list.appendChild(row);
+  });
+};
+$("closeSnapshots").onclick = () => $("snapshotsModal").classList.remove("open");
+
+/* Shortcuts Modal */
+$("btnShortcuts").onclick = () => $("shortcutsModal").classList.add("open");
+$("closeShortcuts").onclick = () => $("shortcutsModal").classList.remove("open");
+
+// Close modals when clicking backdrop
+document.querySelectorAll(".modal-overlay").forEach(m => {
+  m.onclick = e => {
+    if (e.target === m) m.classList.remove("open");
+  };
+});
+
+window.addEventListener("resize", renderDashboard);
+
+/* Initialization */
+load();
+course = current();
+$("dayDate").value = dayKey();
+renderAll();
+
+(async () => {
+  if (course) {
+    await checkHandleStatus(course);
+    if (handleStatus === "connected") {
+      await scan(false);
+      renderAll();
+    }
   }
 })();
+
 })();
 </script>
 </body>
